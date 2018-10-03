@@ -51,6 +51,7 @@ class BabelarityTest
         assertTrue(glosse.length == 6);
         assertTrue(relations.length == 749);
         assertEquals(relations[2], "bn:00000239n_has-kind");
+        System.out.println(Word.allOccurencies() + "\n" + Word.allOccurenciesLemma());
     }
 
     @Test

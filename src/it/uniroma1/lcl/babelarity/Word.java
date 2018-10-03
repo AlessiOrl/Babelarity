@@ -32,9 +32,9 @@ public class Word implements LinguisticObject
 
     public static void addWord(String inflectedForm, String lemma)
     {
-        if (instances.putIfAbsent(lemma, new Word(lemma,inflectedForm))!= null)
-            instances.get(lemma).inflectedForm.add(inflectedForm);
-        instancesFromInflected.put(inflectedForm,instances.get(lemma));
+        if (instances.putIfAbsent(lemma, new Word(lemma, inflectedForm)) != null) instances.get(
+            lemma).inflectedForm.add(inflectedForm);
+        instancesFromInflected.put(inflectedForm, instances.get(lemma));
 
     }
 
@@ -47,13 +47,19 @@ public class Word implements LinguisticObject
     {
         return instances.containsKey(s) ? instances.get(s) : instancesFromInflected.get(s);
     }
+
     public static boolean exist(String s)
     {
         return instancesFromInflected.containsKey(s) || instances.containsKey(s);
     }
+
     @Override
     public String toString()
     {
         return lemma;
     }
+
+    public static int allOccurencies() {return instancesFromInflected.size();}
+
+    public static int allOccurenciesLemma() {return instances.size();}
 }

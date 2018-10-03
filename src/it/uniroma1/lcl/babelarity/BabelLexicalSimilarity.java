@@ -55,8 +55,11 @@ public class BabelLexicalSimilarity implements StrategySimilarity
 
     private void parseCorpus()
     {
-        HashMap<String, HashSet<Integer>> setOfWordsByDocument = new HashMap<>();
+        System.out.println("INIZIO PARSE CORPUS");
+        HashMap<String, HashSet<Integer>> wordsInDocument = new HashMap<>();
         HashMap<String, Integer>          wordsCounter         = new HashMap<>();
+        wordsIndexing = new HashMap<>();
+        int                               k                    = 0;
         for (int x = 0; x < corpusFiles.size(); x++)
         {
             try (BufferedReader br = new BufferedReader(new FileReader(corpusFiles.get(x))))
@@ -64,29 +67,29 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                 StringBuilder text = new StringBuilder();
                 while (br.ready()) text.append(br.readLine());
                 //  TODO: DA RIFARE
-                String[] words = text.toString().replaceAll("\\W", " ").toLowerCase().split(" ");
-                wordsIndexing = new HashMap<>();
-                int k = 0;
-                for (String s: words)
+                String[] words = text.toString().replaceAll("\\W", " ").toLowerCase().split("\\s+");
+                for (String s : words)
                 {
 
                     if (stopWords.contains(s) || !(Word.exist(s))) continue;
-
                     String lemma = Word.fromString(s).getLemma();
 
-                    if (setOfWordsByDocument.putIfAbsent(lemma, new HashSet<>()) != null)
-                        setOfWordsByDocument.get(lemma).add(x);
+                    if (wordsInDocument.putIfAbsent(lemma, new HashSet<>()) != null)
+                        wordsInDocument.get(lemma).add(x);
 
-                    if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma, wordsCounter.get(lemma) + 1);
-                    wordsIndexing.put(lemma, k);
+                    if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma,wordsCounter.get(lemma) + 1);
+                    wordsIndexing.putIfAbsent(lemma, k);
                     k++;
-
                 }
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
-        } pmi = new Float[wordsIndexing.keySet().size()][wordsIndexing.keySet().size()];
+        }
+        System.out.println("INFO:\nWordsInDocument : " + wordsInDocument.keySet().size() + "\n" + "\nWordIndexing : "+wordsIndexing.keySet().size());
+        System.out.println("INIZIO CALCOLO DEL PMI ");
+        pmi = new Float[wordsIndexing.keySet().size()][wordsIndexing.keySet().size()];
+        //heap limit probabilmente dovrò lavorare con la matrice a specchio
         for (String p : wordsCounter.keySet())
         {
             for (String p2 : wordsCounter.keySet())
@@ -95,8 +98,8 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                 else
                 {
                     Set<Integer> intersection = new HashSet<Integer>(
-                        setOfWordsByDocument.get(p)); // use the copy constructor
-                    intersection.retainAll(setOfWordsByDocument.get(p2));
+                        wordsInDocument.get(p)); // use the copy constructor
+                    intersection.retainAll(wordsInDocument.get(p2));
                     float numDoc        = (float) corpusFiles.size();
                     float numeratore    = intersection.size() / numDoc;
                     float denominatore1 = wordsCounter.get(p) / numDoc;
