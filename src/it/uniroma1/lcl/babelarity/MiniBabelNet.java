@@ -25,39 +25,28 @@ public class MiniBabelNet implements Iterable<Synset>
     private StrategySimilarity DocumentSimilarityStrategy;
     private static MiniBabelNet instance;
     private HashMap<String, BabelSynset> synsetsMap = new HashMap<>();
+    //TODO: USARE QUESTA MODALITA' PER LE WORD, per vedere se è un lemma o una flessa fare un OR tra il keySet e il valueSet
+    private HashMap<String, String> fromInflectedToLemma = new HashMap<>();
     private List<BabelSynset> synsets = new ArrayList<>();
     private int synsetSize;
 
     private MiniBabelNet()
     {
-        try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization));
-            Stream<String> streamDictionary = Files.lines(Paths.get(dictionary));
-            Stream<String> streamGlosses = Files.lines(Paths.get(glosses));
-            Stream<String> streamRelations = Files.lines(Paths.get(relations)))
+        try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization)); Stream<String> streamDictionary = Files.lines(Paths.get(dictionary)); Stream<String> streamGlosses = Files.lines(Paths.get(glosses)); Stream<String> streamRelations = Files.lines(Paths.get(relations)))
 
         {
-            streamLemmatization.map(line -> line.split("\t")).forEach(
-                line -> Word.addWord(line[0], line[1]));
+            streamLemmatization.map(line -> line.split("\t")).forEach(line -> Word.addWord(line[0], line[1]));
 
-            streamDictionary.map(line -> line.split("\t", 2)).filter(
-                line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0],
-                                                                                 new BabelSynset(
-                                                                                     line[0],
-                                                                                     new HashSet<>(
-                                                                                         Arrays
-                                                                                             .asList(
-                                                                                                 line[1]
-                                                                                                     .split(
-                                                                                                         "\t"))))));
+            streamDictionary.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn"))
+                .forEach(line -> synsetsMap.put(line[0], new BabelSynset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
 
             streamGlosses.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn"))
-                         .forEach(line -> synsetsMap.get(line[0]).setGlosses(
-                             new HashSet<>(Arrays.asList(line[1].split("\t")))));
+                .forEach(line -> synsetsMap.get(line[0]).setGlosses(new HashSet<>(Arrays.asList(line[1].split("\t")))));
 
             synsets = List.copyOf(synsetsMap.values());
             synsetSize = synsets.size();
 
-            streamRelations.map(line -> line.split("\t")).forEach(line -> synsetsMap.get(line[0]).addRelation(line[2],synsetsMap.get(line[1])));
+            streamRelations.map(line -> line.split("\t")).forEach(line -> synsetsMap.get(line[0]).addRelation(line[2], synsetsMap.get(line[1])));
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -73,9 +62,10 @@ public class MiniBabelNet implements Iterable<Synset>
     /**
      * restituisce l’insieme di synset che contengono tra i loro sensi la parola in input
      */
-    public List<Synset> getSynsets(String word) {
+    public List<Synset> getSynsets(String word)
+    {
         ArrayList<Synset> listOfSynsets = new ArrayList<>();
-        for(BabelSynset bs : synsets) if(bs.getLemmas().contains(Word.fromString(word).getLemma())) listOfSynsets.add(bs);
+        for (BabelSynset bs : synsets) if (bs.getLemmas().contains(Word.fromString(word).getLemma())) listOfSynsets.add(bs);
         return listOfSynsets;
     }
 
@@ -87,8 +77,9 @@ public class MiniBabelNet implements Iterable<Synset>
     /**
      * restituisce uno o più lemmi associati alla parola flessa fornita in input
      */
-    public List<String> getLemmas(String word) {
-            return List.of(Word.fromString(word).getLemma());
+    public List<String> getLemmas(String word)
+    {
+        return List.of(Word.fromString(word).getLemma());
     }
 
     /**
@@ -103,13 +94,12 @@ public class MiniBabelNet implements Iterable<Synset>
      */
 
     /**
-     * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.Synset fornito in input
-     * sotto forma di stringa.
+     * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.Synset fornito in input sotto forma di stringa.
      */
-    public String getSynsetSummary(Synset s) {
-        BabelSynset      obj            = (BabelSynset)s;
-        StringBuilder    ret            = new StringBuilder(
-            obj.getID() + "\t" + obj.getPOS() + "\t");
+    public String getSynsetSummary(Synset s)
+    {
+        BabelSynset obj = (BabelSynset) s;
+        StringBuilder ret = new StringBuilder(obj.getID() + "\t" + obj.getPOS() + "\t");
         Iterator<String> LemmasIterator = obj.getLemmas().iterator();
         while (LemmasIterator.hasNext())
         {
@@ -123,19 +113,18 @@ public class MiniBabelNet implements Iterable<Synset>
         while (glosseIterator.hasNext())
         {
             ret.append(glosseIterator.next());
-            if(glosseIterator.hasNext()) ret.append(";");
+            if (glosseIterator.hasNext()) ret.append(";");
         }
 
         ret.append("\t");
 
-        ret.append(obj.getRelations().entrySet().stream().flatMap(entry -> entry.getValue().stream().map(bs -> bs.getID()+"_"+entry.getKey())).collect(
-            Collectors.joining(";")));
+        ret.append(obj.getRelations().entrySet().stream().flatMap(entry -> entry.getValue().stream().map(bs -> bs.getID() + "_" + entry.getKey())).collect(Collectors.joining(";")));
 
         return ret.toString();
     }
+
     /**
-     * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici
-     * (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
+     * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
      */
     public double computeSimilarity(LinguisticObject o1, LinguisticObject o2)
     {

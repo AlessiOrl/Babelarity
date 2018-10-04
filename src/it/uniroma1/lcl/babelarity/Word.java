@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+// TODO: ELIMINARE PRATICAMENTE TUTTO E LASCIARE SOLO UN PARAMETRO "STRING" DA UTILIZZARE QUANDO TI PASSA LA STRINGA
 public class Word implements LinguisticObject
 {
 
