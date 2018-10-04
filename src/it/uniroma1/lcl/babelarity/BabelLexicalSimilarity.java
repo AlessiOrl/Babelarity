@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +60,8 @@ public class BabelLexicalSimilarity implements StrategySimilarity
         HashMap<String, HashSet<Integer>> wordsInDocument = new HashMap<>();
         HashMap<String, Integer>          wordsCounter         = new HashMap<>();
         wordsIndexing = new HashMap<>();
-        int                               k                    = 0;
+        int               k          = 0;
+        ArrayList<String> wordsArray = new ArrayList<>();
         for (int x = 0; x < corpusFiles.size(); x++)
         {
             try (BufferedReader br = new BufferedReader(new FileReader(corpusFiles.get(x))))
@@ -78,7 +80,11 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                         wordsInDocument.get(lemma).add(x);
 
                     if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma,wordsCounter.get(lemma) + 1);
-                    if (wordsIndexing.putIfAbsent(lemma, k) == null) k++;
+                    if (wordsIndexing.putIfAbsent(lemma, k) == null)
+                    {
+                        wordsArray.add(lemma);
+                        k++;
+                    }
                 }
             } catch (IOException e)
             {
