@@ -27,7 +27,10 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     private HashSet<String> stopWords;
     private Map<String, Integer> wordsIndexing;
     private static List<File> corpusFiles;
-    Float[][] pmi;
+    HashMap<String, HashSet<Integer>> wordsInDocument = new HashMap<>();
+    HashMap<String, Integer> wordsCounter = new HashMap<>();
+
+    //TODO:AGGIUNGERE PARAMETRO PER TENERE SALVATI I PMI GIA' CALCOALTI
 
     private BabelLexicalSimilarity()
     {
@@ -57,82 +60,99 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     private void parseCorpus()
     {
         System.out.println("INIZIO PARSE CORPUS");
-        HashMap<String, HashSet<Integer>> wordsInDocument = new HashMap<>();
-        HashMap<String, Integer>          wordsCounter         = new HashMap<>();
+        long timeStart = System.currentTimeMillis();
         wordsIndexing = new HashMap<>();
-        int               k          = 0;
-        ArrayList<String> wordsArray = new ArrayList<>();
+        int k = 0;
         for (int x = 0; x < corpusFiles.size(); x++)
         {
             try (BufferedReader br = new BufferedReader(new FileReader(corpusFiles.get(x))))
             {
                 StringBuilder text = new StringBuilder();
                 while (br.ready()) text.append(br.readLine());
-                //  TODO: DA RIFARE
                 String[] words = text.toString().replaceAll("\\W", " ").toLowerCase().split("\\s+");
+
                 for (String s : words)
                 {
+                    if (stopWords.contains(s)) continue;
 
-                    if (stopWords.contains(s) || !(Word.exist(s))) continue;
-                    String lemma = Word.fromString(s).getLemma();
+                    String lemma = MiniBabelNet.takeWord(s);
+
+                    if (lemma == null) continue;
 
                     if (wordsInDocument.putIfAbsent(lemma, new HashSet<>()) != null)
                         wordsInDocument.get(lemma).add(x);
 
-                    if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma,wordsCounter.get(lemma) + 1);
-                    if (wordsIndexing.putIfAbsent(lemma, k) == null)
-                    {
-                        wordsArray.add(lemma);
-                        k++;
-                    }
+                    if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma,
+                                                                                     wordsCounter
+                                                                                         .get(
+                                                                                             lemma) +
+                                                                                     1);
+                    if (wordsIndexing.putIfAbsent(lemma, k) == null) k++;
+
                 }
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
-        System.out.println("INFO:\nWordsInDocument : " + wordsInDocument.keySet().size() + "\n" + "\nWordIndexing : "+wordsIndexing.keySet().size());
-        System.out.println("INIZIO CALCOLO DEL PMI ");
-        pmi = new Float[wordsIndexing.keySet().size()][wordsIndexing.keySet().size()];
-        //heap limit probabilmente dovrò lavorare con la matrice a specchio
-        for (String p : wordsCounter.keySet())
+        long timeEnd     = System.currentTimeMillis();
+        long timeTakenSc = (timeEnd - timeStart) / 1000;
+        System.out.println("FINE PARSE CORPUS, time = " + timeTakenSc + " sec");
+    }
+
+    private Float[] generatePMI(String s)
+    {
+        Float[] vettore = new Float[wordsIndexing.keySet().size()];
+        for (String p : wordsIndexing.keySet())
         {
-            for (String p2 : wordsCounter.keySet())
+            if (s.equals(p)) vettore[wordsIndexing.get(p)] = 1f;
+            else
             {
-                if (p.equals(p2)) pmi[wordsIndexing.get(p)][wordsIndexing.get(p2)] = 1f;
+                Set<Integer> intersection = new HashSet<Integer>(
+                    wordsInDocument.get(s)); // use the copy constructor
+                intersection.retainAll(wordsInDocument.get(p));
+                if (wordsCounter.get(p) <= 15 || intersection.size() <= 10)
+                    vettore[wordsIndexing.get(p)] = 0f;
                 else
                 {
-                    Set<Integer> intersection = new HashSet<Integer>(
-                        wordsInDocument.get(p)); // use the copy constructor
-                    intersection.retainAll(wordsInDocument.get(p2));
                     float numDoc        = (float) corpusFiles.size();
                     float numeratore    = intersection.size() / numDoc;
-                    float denominatore1 = wordsCounter.get(p) / numDoc;
-                    float denominatore2 = wordsCounter.get(p2) / numDoc;
-                    pmi[wordsIndexing.get(p)][wordsIndexing.get(p2)] =
-                        numeratore / (denominatore1 * denominatore2);
+                    float denominatore1 = wordsCounter.get(s) / numDoc;
+                    float denominatore2 = wordsCounter.get(p) / numDoc;
+                    vettore[wordsIndexing.get(p)] = numeratore / (denominatore1 * denominatore2);
                 }
             }
         }
+        return vettore;
     }
 
     //restituisce il valore di similarità sotto   forma di double
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
-
     {
+        System.out.println("INIZIO COMPUTE SIMILARITY");
+        long timeStart = System.currentTimeMillis();
+
         String p  = ((Word) o).toString();
         String p2 = ((Word) o2).toString();
         if (p.equals(p2)) return 1;
-        double  numeratore   = 0;
-        double  denominatore = 0;
-        Float[] vettore1     = pmi[wordsIndexing.get(p)];
-        Float[] vettore2     = pmi[wordsIndexing.get(p2)];
-        for (int x = 0; x < wordsIndexing.size(); x++)
+        double  numeratore    = 0;
+        double  denominatore  = 0;
+        double  denominatore1 = 0;
+        double  denominatore2 = 0;
+        Float[] vettore1      = generatePMI(p);
+        Float[] vettore2      = generatePMI(p2);
+        //TODO: salvare i dati generati
+        for (int x = 0; x < vettore1.length; x++)
         {
             numeratore += vettore1[x] * vettore2[x];
-            denominatore += Math.pow(vettore1[x], 2.0) * Math.pow(vettore2[x], 2);
+            denominatore1 += Math.pow(vettore1[x], 2.0);
+            denominatore2 += Math.pow(vettore2[x], 2.0);
         }
+        denominatore = Math.sqrt(denominatore1) * Math.sqrt(denominatore2);
+        long timeEnd     = System.currentTimeMillis();
+        long timeTakenSc = (timeEnd - timeStart) / 1000;
+        System.out.println("FINE COMPUTE SIMILARITY , time = " + timeTakenSc + " sec");
 
         return numeratore / denominatore;
     }

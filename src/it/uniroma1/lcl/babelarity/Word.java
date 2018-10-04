@@ -4,62 +4,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-// TODO: ELIMINARE PRATICAMENTE TUTTO E LASCIARE SOLO UN PARAMETRO "STRING" DA UTILIZZARE QUANDO TI PASSA LA STRINGA
+
 public class Word implements LinguisticObject
 {
+    private String word;
 
-    private static HashMap<String, Word> instances = new HashMap<>();
-    private static HashMap<String, Word> instancesFromInflected = new HashMap<>();
-    //avere una mappa inflecrted lemma in mini babel net
-    private Set<String> inflectedForm;
-    private String lemma;
-
-    private Word(String inflectedForm, String lemma)
+    private Word(String word)
     {
-        this.lemma = lemma;
-        this.inflectedForm = new HashSet<>(List.of(inflectedForm));
-    }
-
-    public Set<String> getInflectedForm()
-    {
-        return inflectedForm;
-    }
-
-    public String getLemma()
-    {
-        return lemma;
-    }
-
-    public static void addWord(String inflectedForm, String lemma)
-    {
-        if (instances.putIfAbsent(lemma, new Word(lemma, inflectedForm)) != null) instances.get(
-            lemma).inflectedForm.add(inflectedForm);
-        instancesFromInflected.put(inflectedForm, instances.get(lemma));
-
-    }
-
-    public static HashMap<String, Word> getInstance()
-    {
-        return instances;
+        this.word=word;
     }
 
     public static Word fromString(String s)
     {
-        return instances.containsKey(s) ? instances.get(s) : instancesFromInflected.get(s);
+        Word word = new Word(MiniBabelNet.takeWord(s));
+        return word;
     }
+    public String toString(){ return word;}
 
-    public static boolean exist(String s)
-    {
-        return instancesFromInflected.containsKey(s) || instances.containsKey(s);
-    }
-
-    @Override
-    public String toString()
-    {
-        return lemma;
-    }
-
-    public static int allOccurencies() {return instancesFromInflected.size();}
-
-    public static int allOccurenciesLemma() {return instances.size();}
 }
