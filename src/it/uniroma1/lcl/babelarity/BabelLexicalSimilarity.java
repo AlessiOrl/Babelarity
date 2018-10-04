@@ -78,8 +78,7 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                         wordsInDocument.get(lemma).add(x);
 
                     if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma,wordsCounter.get(lemma) + 1);
-                    wordsIndexing.putIfAbsent(lemma, k);
-                    k++;
+                    if (wordsIndexing.putIfAbsent(lemma, k) == null) k++;
                 }
             } catch (IOException e)
             {
@@ -104,7 +103,7 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                     float numeratore    = intersection.size() / numDoc;
                     float denominatore1 = wordsCounter.get(p) / numDoc;
                     float denominatore2 = wordsCounter.get(p2) / numDoc;
-                    pmi[wordsIndexing.keySet().size()][wordsIndexing.keySet().size()] =
+                    pmi[wordsIndexing.get(p)][wordsIndexing.get(p2)] =
                         numeratore / (denominatore1 * denominatore2);
                 }
             }
@@ -128,6 +127,8 @@ public class BabelLexicalSimilarity implements StrategySimilarity
             numeratore += vettore1[x] * vettore2[x];
             denominatore += Math.pow(vettore1[x], 2.0) * Math.pow(vettore2[x], 2);
         }
+
         return numeratore / denominatore;
     }
+
 }
