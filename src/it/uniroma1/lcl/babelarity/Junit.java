@@ -171,15 +171,11 @@ class BabelarityTest
         double sim2 = miniBabelNet.computeSimilarity(o3, o4);
         double sim3 = miniBabelNet.computeSimilarity(o1, o3);
         double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-        String word1 = "port";
-        String word2 = "ship";
-        String word3 = "fear";
-        String word4 = "emotion";
 
-        System.out.println(sim1 +" "+ word1 + " | "+ word2);
-        System.out.println(sim2 +" "+ word3 + " | "+ word4);
-        System.out.println(sim3 +" "+ word1 + " | "+ word3);
-        System.out.println(sim4 +" "+ word2 + " | "+ word4);
+        System.out.println(sim1 +" "+ ((Word)o1).toString() + " | "+ ((Word)o2).toString());
+        System.out.println(sim2 +" "+ ((Word)o3).toString() + " | "+ ((Word)o4).toString());
+        System.out.println(sim3 +" "+ ((Word)o1).toString() + " | "+ ((Word)o3).toString());
+        System.out.println(sim4 +" "+ ((Word)o2).toString() + " | "+ ((Word)o4).toString());
         System.out.println("sim1 > sim3 && sim2 > sim4");
 
 
