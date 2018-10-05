@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.print.Doc;
+import javax.print.attribute.HashPrintJobAttributeSet;
 
 public class BabelLexicalSimilarity implements StrategySimilarity
 {
@@ -24,7 +26,6 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     HashMap<String, Integer> wordsCounter;
     private static List<File> corpusFiles;
     private HashSet<String> stopWords;
-    private int c;
     //TODO:AGGIUNGERE PARAMETRO PER TENERE SALVATI I PMI GIA' CALCOALTI
 
     private BabelLexicalSimilarity()
@@ -60,36 +61,37 @@ public class BabelLexicalSimilarity implements StrategySimilarity
         wordsIndexing = new HashMap<>();
         documentByWords = new HashMap<>();
         int k = 0;
-        c = 0;
-        for (File f : corpusFiles)
+        int x = 0;
+        for (File file : corpusFiles)
         {
+            HashMap<String, Integer> DocumentInfo = new HashMap<>();
             try
             {
-                String text = new String(Files.readAllBytes(f.toPath()), "utf-8");
-                String[] periods = text.toLowerCase().split(".");
-                for (String period : periods)
+                String text = new String(Files.readAllBytes(file.toPath()), "utf-8");
+                String[] words = text.replaceAll("\\W", " ").toLowerCase().split("\\s+");
+                for (String s : words)
                 {
-                    String[] p = period.replaceAll("\\W", " ").split("\\s+");
-                    for (String s : p)
-                    {
+                    if (stopWords.contains(s)) continue;
 
-                        if (stopWords.contains(s)) continue;
+                    String lemma = MiniBabelNet.takeWord(s);
 
-                        String lemma = MiniBabelNet.takeWord(s);
+                    if (lemma == null) continue;
+                    if (DocumentInfo.putIfAbsent(lemma, 1) != null) DocumentInfo.put(lemma, DocumentInfo.get(lemma) + 1);
 
-                        if (lemma == null) continue;
-
-                        if (documentByWords.putIfAbsent(lemma, new HashSet<>(c)) != null) documentByWords.get(lemma).add(c);
-
-                        if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma, wordsCounter.get(lemma) + 1);
-                        if (wordsIndexing.putIfAbsent(lemma, k) == null) k++;
-                    }
-                    c++;
                 }
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
+
+            for (String s : DocumentInfo.keySet())
+            {
+                if (DocumentInfo.get(s) < 2 || DocumentInfo.get(s) > 25) continue;
+                if (documentByWords.putIfAbsent(s, new HashSet<>(x)) != null) documentByWords.get(s).add(x);
+                if (wordsIndexing.putIfAbsent(s, k) == null) k++;
+                if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s)) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s));
+            }
+            x++;
         }
         long timeEnd = System.currentTimeMillis();
         long timeTakenSc = (timeEnd - timeStart) / 1000;
@@ -104,20 +106,14 @@ public class BabelLexicalSimilarity implements StrategySimilarity
             if (wordsIndexing.get(s).equals(wordsIndexing.get(p))) vettore[wordsIndexing.get(p)] = 1f;
             else
             {
-                Set<Integer> intersection = new HashSet<Integer>(documentByWords.get(s)); // use the copy constructor
+                Set<Integer> intersection = new HashSet<>(documentByWords.get(s)); // use the copy constructor
                 intersection.retainAll(documentByWords.get(p));
                 if ((s.equals("test") && (p.equals("exam"))) || (s.equals("pop") && p.equals("rock"))) System.out.println(s + " | " + p + " " + intersection.size());
-                /*float numDoc = (float) corpusFiles.size();
-                float numeratore = intersection.size() / numDoc;
-                float denominatore1 = wordsCounter.get(s) / numDoc;
-                float denominatore2 = wordsCounter.get(p) / numDoc;
-                vettore[wordsIndexing.get(p)] = numeratore / (denominatore1 * denominatore2);*/
-                float numPer = (float) c;
-                float numeratore = intersection.size() / numPer;
-                float denominatore1 = wordsCounter.get(s) / numPer;
-                float denominatore2 = wordsCounter.get(p) / numPer;
+                float numDoc = (float) documentByWords.get(s).size()+documentByWords.get(p).size();
+                float numeratore = intersection.size() ;
+                float denominatore1 = wordsCounter.get(s) /numDoc;
+                float denominatore2 = wordsCounter.get(p)/ numDoc;
                 vettore[wordsIndexing.get(p)] = numeratore / (denominatore1 * denominatore2);
-
             }
         }
         return vettore;

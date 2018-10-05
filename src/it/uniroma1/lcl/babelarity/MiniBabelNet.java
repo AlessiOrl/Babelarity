@@ -97,6 +97,7 @@ public class MiniBabelNet implements Iterable<Synset>
     }
 
     /**
+     *
      * restituisce l’insieme di synset che contengono tra i loro sensi la parola in input
      */
     public List<Synset> getSynsets(String word)
