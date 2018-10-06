@@ -1,5 +1,5 @@
 package it.uniroma1.lcl.babelarity;
 
-public interface LinguisticObject {
-}
+public interface LinguisticObject
+{}
 

@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.print.Doc;
-import javax.print.attribute.HashPrintJobAttributeSet;
 
 public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {

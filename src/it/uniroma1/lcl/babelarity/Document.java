@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class Document implements LinguisticObject , Serializable
+public class Document implements LinguisticObject, Serializable
 {
 
     private String id;
@@ -52,18 +52,17 @@ public class Document implements LinguisticObject , Serializable
     @Override
     public int hashCode()
     {
-        return Objects.hash(id,title);
+        return Objects.hash(id, title);
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o)
+    {
         if (o == null) return false;
         if (o == this) return true;
-        if (!(o instanceof Document))return false;
+        if (!(o instanceof Document)) return false;
         Document oDocument = (Document) o;
-        return  this.id.equals(oDocument.id) &&
-                this.title.equals(oDocument.title) &&
-                this.content.equals(oDocument.content);
+        return this.id.equals(oDocument.id) && this.title.equals(oDocument.title) && this.content.equals(oDocument.content);
 
     }
 }

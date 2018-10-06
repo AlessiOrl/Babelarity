@@ -1,4 +1,4 @@
 package it.uniroma1.lcl.babelarity;
 
-public interface Synset extends LinguisticObject{
-}
+public interface Synset extends LinguisticObject
+{}

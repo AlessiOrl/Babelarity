@@ -2,12 +2,14 @@ package it.uniroma1.lcl.babelarity;
 
 public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
 {
+
     private static BabelSemanticSimilarity instance;
 
 
-    private BabelSemanticSimilarity(){}
+    private BabelSemanticSimilarity() {}
 
-    public static BabelSemanticSimilarity getInstance(){
+    public static BabelSemanticSimilarity getInstance()
+    {
         if (instance == null) instance = new BabelSemanticSimilarity();
         return instance;
     }

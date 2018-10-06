@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 public class BabelSynset implements Synset
 {
@@ -52,9 +51,7 @@ public class BabelSynset implements Synset
     }
 
     /**
-     * restituisce l’id univoco del synset sotto forma di stringa. Gli identificativi dei synset
-     * seguono il formato bn:00000000n, dove l’ultimo carattere rappresenta la parte del discorso
-     * del concetto n(oun), v(erb), a(djective), (adve)r(b).
+     * restituisce l’id univoco del synset sotto forma di stringa. Gli identificativi dei synset seguono il formato bn:00000000n, dove l’ultimo carattere rappresenta la parte del discorso del concetto n(oun), v(erb), a(djective), (adve)r(b).
      */
     public String getID()
     {
@@ -62,8 +59,7 @@ public class BabelSynset implements Synset
     }
 
     /**
-     * estituisce la parte del discorso (Part-of-Speech) del synset (calcolabile a partire dall’ID
-     * del synset) scelta tra NOUN, ADV, ADJ, VERB.
+     * estituisce la parte del discorso (Part-of-Speech) del synset (calcolabile a partire dall’ID del synset) scelta tra NOUN, ADV, ADJ, VERB.
      */
     public Pos getPOS()
     {
@@ -98,9 +94,9 @@ public class BabelSynset implements Synset
         else relations.put(type, new ArrayList<>(Arrays.asList(synset)));
         synset.addFather(this);
     }
+
     /**
      * aggiunge alla lista dei padri il proprio padre
-     * @param father
      */
     public void addFather(BabelSynset father)
     {
@@ -112,7 +108,8 @@ public class BabelSynset implements Synset
         return relations.get(type);
     }
 
-    public HashMap<String,ArrayList<BabelSynset>> getRelations(){
+    public HashMap<String, ArrayList<BabelSynset>> getRelations()
+    {
         return relations;
     }
 
