@@ -2,16 +2,21 @@ package it.uniroma1.lcl.babelarity;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.text.html.parser.Entity;
 
 public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {
@@ -52,7 +57,6 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     {
         if (instance == null) instance = new BabelLexicalSimilarity();
         return instance;
-
     }
 
     private void parseCorpus()
@@ -60,24 +64,18 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         int k = 0;
         for (int x = 0; x < corpusFiles.size(); x++)
         {
-            HashMap<String, Integer> DocumentInfo = new HashMap<>();
             try
             {
-                String text = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), "utf-8");
-                String[] words = text.replaceAll("\\W", " ").toLowerCase().split("\\s+");
-                for (String s : words)
-                {
-                    if (stopWords.contains(s)) continue;
-                    String lemma = MiniBabelNet.takeWord(s);
-                    if (lemma == null) continue;
-                    if (DocumentInfo.putIfAbsent(lemma, 1) != null) DocumentInfo.put(lemma, DocumentInfo.get(lemma) + 1);
-                }
+                String[] words =  new String(Files.readAllBytes(corpusFiles.get(x).toPath()), StandardCharsets.UTF_8).replaceAll("\\W", " ").toLowerCase().split("\\s+");
+
+                Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(stopWords.contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
                 for (String s : DocumentInfo.keySet())
                 {
                     if (DocumentInfo.get(s) < 2 || DocumentInfo.get(s) > 25) continue;
                     if (documentByWords.putIfAbsent(s, new HashSet<>(x)) != null) documentByWords.get(s).add(x);
                     if (wordsIndexing.putIfAbsent(s, k) == null) k++;
-                    if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s)) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s));
+                    if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s).intValue()) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s).intValue());
                 }
             } catch (IOException e)
             {
@@ -131,32 +129,3 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     }
 
 }
-
-        /* VERSIONE DIVISIONE BY DOCUMENT
-         for (int x = 0; x < corpusFiles.size(); x++)
-        {
-            try
-            {
-
-                String text = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), "utf-8");
-                String[] words = text.replaceAll("\\W", " ").toLowerCase().split("\\s+");
-                for (String s : words)
-                {
-                    if (stopWords.contains(s)) continue;
-
-                    String lemma = MiniBabelNet.takeWord(s);
-
-                    if (lemma == null) continue;
-
-                    if (documentByWords.putIfAbsent(lemma, new HashSet<>(x)) != null) documentByWords.get(lemma).add(x);
-
-                    if (wordsCounter.putIfAbsent(lemma, 1) != null) wordsCounter.put(lemma, wordsCounter.get(lemma) + 1);
-                    if (wordsIndexing.putIfAbsent(lemma, k) == null) k++;
-
-                }
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-                                    "Take everything but (except) the period. All the other like , or [] or something like 123 should remain the same"
-*/

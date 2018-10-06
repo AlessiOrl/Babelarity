@@ -33,23 +33,23 @@ public class MiniBabelNet implements Iterable<Synset>
 
     private MiniBabelNet()
     {
-        try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization)); Stream<String> streamDictionary = Files.lines(Paths.get(dictionary)); Stream<String> streamGlosses = Files.lines(Paths.get(glosses)); Stream<String> streamRelations = Files.lines(Paths.get(relations)))
+        try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization));
+             Stream<String> streamDictionary = Files.lines(Paths.get(dictionary));
+             Stream<String> streamGlosses = Files.lines(Paths.get(glosses));
+             Stream<String> streamRelations = Files.lines(Paths.get(relations)) )
 
         {
-            streamLemmatization.map(line -> line.split("\t")).forEach(line ->
-                                                                      {
-                                                                          fromInflectedToLemma.put(line[0], line[1]);
-                                                                          lemmas.add(line[1]);
-                                                                      });
+            streamLemmatization.map(line -> line.split("\t")).forEach(line -> { fromInflectedToLemma.put(line[0], line[1]); lemmas.add(line[1]);});
 
             streamDictionary.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0], new BabelSynset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
 
             streamGlosses.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.get(line[0]).setGlosses(new HashSet<>(Arrays.asList(line[1].split("\t")))));
 
+            streamRelations.map(line -> line.split("\t")).forEach(line -> synsetsMap.get(line[0]).addRelation(line[2], synsetsMap.get(line[1])));
+
             synsets = List.copyOf(synsetsMap.values());
             synsetSize = synsets.size();
 
-            streamRelations.map(line -> line.split("\t")).forEach(line -> synsetsMap.get(line[0]).addRelation(line[2], synsetsMap.get(line[1])));
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -69,7 +69,6 @@ public class MiniBabelNet implements Iterable<Synset>
     public static String takeWord(String s)
     {
         return fromInflectedToLemma.containsKey(s) ? fromInflectedToLemma.get(s) : lemmas.contains(s) ? s : null;
-
     }
 
     /**

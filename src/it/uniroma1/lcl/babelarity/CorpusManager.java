@@ -8,7 +8,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.stream.Collectors;
+import javax.print.Doc;
 
 /**
  * RESPONSABILE DEL PARSING
@@ -16,10 +19,11 @@ import java.util.stream.Collectors;
 
 // TODO: Iterable by the given documents
 
-public class CorpusManager //implements Iterable<Document>
+public class CorpusManager implements Iterable<Document>
 {
 
     private static CorpusManager instance;
+    private static ArrayList<Document> parsedDocuments;
 
     private CorpusManager()
     {
@@ -41,7 +45,10 @@ public class CorpusManager //implements Iterable<Document>
         {
 
             String[] fstLine = reader.readLine().split("\t");
-            return new Document(fstLine[0], fstLine[1], reader.lines().collect(Collectors.joining("\n")), path);
+            Document doc = new Document(fstLine[0], fstLine[1], reader.lines().collect(Collectors.joining("\n")), path);
+            parsedDocuments.add(doc);
+            return doc;
+
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -56,8 +63,7 @@ public class CorpusManager //implements Iterable<Document>
     {
         try (FileInputStream streamFile = new FileInputStream("resources/documents/parsed/" + id + ".ser"); ObjectInputStream streamObj = new ObjectInputStream(streamFile))
         {
-            Document doc = (Document) streamObj.readObject();
-            return doc;
+            return (Document) streamObj.readObject();
         } catch (Exception e) { System.out.println(e); }
         return null;
     }
@@ -72,7 +78,7 @@ public class CorpusManager //implements Iterable<Document>
             oos.writeObject(document);
         } catch (IOException e) { System.out.println(e); }
     }
-    /*
+
     @Override
     public Iterator<Document> iterator()
     {
@@ -93,5 +99,5 @@ public class CorpusManager //implements Iterable<Document>
             }
         };
 
-    }*/
+    }
 }
