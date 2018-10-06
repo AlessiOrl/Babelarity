@@ -24,10 +24,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     private Map<String, Integer> wordsIndexing;
     private HashMap<String, Integer> wordsCounter;
     private HashSet<String> stopWords;
-    private HashMap<String, Float[]> vectorizedWord;
     private VectorizedWords vectorizedWords;
-
-    //TODO:AGGIUNGERE PARAMETRO PER TENERE SALVATI I PMI GIA' CALCOALTI
 
     private BabelLexicalSimilarity()
     {
@@ -35,8 +32,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         wordsCounter = new HashMap<>();
         wordsIndexing = new HashMap<>();
         documentByWords = new HashMap<>();
-        vectorizedWord = new HashMap<>();
-        vectorizedWords  = new VectorizedWords(1);
+        vectorizedWords = new VectorizedWords();
         this.parseStopWords();
         this.parseCorpus();
     }
@@ -61,9 +57,6 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 
     private void parseCorpus()
     {
-        System.out.println("INIZIO PARSE CORPUS");
-        long timeStart = System.currentTimeMillis();
-
         int k = 0;
         for (int x = 0; x < corpusFiles.size(); x++)
         {
@@ -75,28 +68,23 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
                 for (String s : words)
                 {
                     if (stopWords.contains(s)) continue;
-
                     String lemma = MiniBabelNet.takeWord(s);
-
                     if (lemma == null) continue;
                     if (DocumentInfo.putIfAbsent(lemma, 1) != null) DocumentInfo.put(lemma, DocumentInfo.get(lemma) + 1);
-
+                }
+                for (String s : DocumentInfo.keySet())
+                {
+                    if (DocumentInfo.get(s) < 2 || DocumentInfo.get(s) > 25) continue;
+                    if (documentByWords.putIfAbsent(s, new HashSet<>(x)) != null) documentByWords.get(s).add(x);
+                    if (wordsIndexing.putIfAbsent(s, k) == null) k++;
+                    if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s)) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s));
                 }
             } catch (IOException e)
             {
                 e.printStackTrace();
             }
 
-            for (String s : DocumentInfo.keySet())
-            {
-                if (DocumentInfo.get(s) < 2 || DocumentInfo.get(s) > 25) continue;
-                if (documentByWords.putIfAbsent(s, new HashSet<>(x)) != null) documentByWords.get(s).add(x);
-                if (wordsIndexing.putIfAbsent(s, k) == null) k++;
-                if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s)) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s));
-            }
         }
-        long timeEnd = System.currentTimeMillis();
-        long timeTakenSc = (timeEnd - timeStart) / 1000;
     }
 
     private Float[] generatePMI(String s)
@@ -119,17 +107,12 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         return vettore;
     }
 
-    //restituisce il valore di similarità sotto   forma di double
+    //restituisce il valore di similarità sottoforma di double
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
-
-
-
         String p = ((Word) o).toString();
         String p2 = ((Word) o2).toString();
-        System.out.println("INIZIO PARSE WORDS : " + p + " | " + p2);
-        long timeStart = System.currentTimeMillis();
         if (p.equals(p2)) return 1;
         double numeratore = 0;
         double denominatore1 = 0;
@@ -144,10 +127,6 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
             denominatore1 += Math.pow(vectorizedWords.get(p)[x], 2.0);
             denominatore2 += Math.pow(vectorizedWords.get(p2)[x], 2.0);
         }
-        long timeEnd = System.currentTimeMillis();
-        long timeTakenSc = (timeEnd - timeStart) ;
-        System.out.println("FINE PARSING time : " + timeTakenSc);
-        System.out.println("-----------------------------------");
         return numeratore / (Math.sqrt(denominatore1) * Math.sqrt(denominatore2));
     }
 
