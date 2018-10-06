@@ -15,15 +15,15 @@ import java.util.stream.Stream;
 import javax.print.Doc;
 import javax.print.attribute.HashPrintJobAttributeSet;
 
-public class BabelLexicalSimilarity implements StrategySimilarity
+public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {
 
     private static Path corpusDir = Paths.get("resources/corpus");
     private static Path stopWordPath = Paths.get("stopWords.txt");
     private static BabelLexicalSimilarity instance;
-    HashMap<String, HashSet<Integer>> documentByWords;
+    private HashMap<String, HashSet<Integer>> documentByWords;
     private Map<String, Integer> wordsIndexing;
-    HashMap<String, Integer> wordsCounter;
+    private HashMap<String, Integer> wordsCounter;
     private static List<File> corpusFiles;
     private HashSet<String> stopWords;
     //TODO:AGGIUNGERE PARAMETRO PER TENERE SALVATI I PMI GIA' CALCOALTI
@@ -31,6 +31,9 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     private BabelLexicalSimilarity()
     {
         corpusFiles = List.of(corpusDir.toFile().listFiles());
+        wordsCounter = new HashMap<>();
+        wordsIndexing = new HashMap<>();
+        documentByWords = new HashMap<>();
         this.parseStopWords();
         this.parseCorpus();
     }
@@ -57,17 +60,14 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     {
         System.out.println("INIZIO PARSE CORPUS");
         long timeStart = System.currentTimeMillis();
-        wordsCounter = new HashMap<>();
-        wordsIndexing = new HashMap<>();
-        documentByWords = new HashMap<>();
+
         int k = 0;
-        int x = 0;
-        for (File file : corpusFiles)
+        for (int x = 0; x < corpusFiles.size(); x++)
         {
             HashMap<String, Integer> DocumentInfo = new HashMap<>();
             try
             {
-                String text = new String(Files.readAllBytes(file.toPath()), "utf-8");
+                String text = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), "utf-8");
                 String[] words = text.replaceAll("\\W", " ").toLowerCase().split("\\s+");
                 for (String s : words)
                 {
@@ -91,11 +91,9 @@ public class BabelLexicalSimilarity implements StrategySimilarity
                 if (wordsIndexing.putIfAbsent(s, k) == null) k++;
                 if (wordsCounter.putIfAbsent(s, DocumentInfo.get(s)) != null) wordsCounter.put(s, wordsCounter.get(s) + DocumentInfo.get(s));
             }
-            x++;
         }
         long timeEnd = System.currentTimeMillis();
         long timeTakenSc = (timeEnd - timeStart) / 1000;
-        System.out.println("FINE PARSE CORPUS, time = " + timeTakenSc + " sec");
     }
 
     private Float[] generatePMI(String s)
@@ -108,11 +106,10 @@ public class BabelLexicalSimilarity implements StrategySimilarity
             {
                 Set<Integer> intersection = new HashSet<>(documentByWords.get(s)); // use the copy constructor
                 intersection.retainAll(documentByWords.get(p));
-                if ((s.equals("test") && (p.equals("exam"))) || (s.equals("pop") && p.equals("rock"))) System.out.println(s + " | " + p + " " + intersection.size());
-                float numDoc = (float) documentByWords.get(s).size()+documentByWords.get(p).size();
-                float numeratore = intersection.size() ;
-                float denominatore1 = wordsCounter.get(s) /numDoc;
-                float denominatore2 = wordsCounter.get(p)/ numDoc;
+                float numDoc = (float) documentByWords.get(s).size() + documentByWords.get(p).size();
+                float numeratore = intersection.size() / numDoc - intersection.size();
+                float denominatore1 = wordsCounter.get(s) / numDoc;
+                float denominatore2 = wordsCounter.get(p) / numDoc;
                 vettore[wordsIndexing.get(p)] = numeratore / (denominatore1 * denominatore2);
             }
         }
@@ -123,21 +120,11 @@ public class BabelLexicalSimilarity implements StrategySimilarity
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
-        System.out.println("INIZIO COMPUTE SIMILARITY");
-
-        long timeStart = System.currentTimeMillis();
 
         String p = ((Word) o).toString();
         String p2 = ((Word) o2).toString();
-        System.out.println("-------------------------");
-        if (p.equals("test") && p2.equals("exam") || (p.equals("pop") && p2.equals("rock")))
-        {
-            System.out.println("Occorrenze di " + p + " " + wordsCounter.get(p));
-            System.out.println("Occorrenze di " + p2 + " " + wordsCounter.get(p2));
-        }
         if (p.equals(p2)) return 1;
         double numeratore = 0;
-        double denominatore = 0;
         double denominatore1 = 0;
         double denominatore2 = 0;
         Float[] vettore1 = generatePMI(p);
@@ -149,12 +136,7 @@ public class BabelLexicalSimilarity implements StrategySimilarity
             denominatore1 += Math.pow(vettore1[x], 2.0);
             denominatore2 += Math.pow(vettore2[x], 2.0);
         }
-        denominatore = Math.sqrt(denominatore1) * Math.sqrt(denominatore2);
-        long timeEnd = System.currentTimeMillis();
-        long timeTakenSc = (timeEnd - timeStart) / 1000;
-        System.out.println("FINE COMPUTE SIMILARITY , time = " + timeTakenSc + " sec");
-
-        return numeratore / denominatore;
+        return numeratore / (Math.sqrt(denominatore1) * Math.sqrt(denominatore2));
     }
 
 }

@@ -21,8 +21,8 @@ public class MiniBabelNet implements Iterable<Synset>
     private static String relations = "resources/relations.txt";
 
     private StrategySimilarity lexicalSimilarityStrategy;
-    private StrategySimilarity SemanticSimilarityStrategy;
-    private StrategySimilarity DocumentSimilarityStrategy;
+    private StrategySimilarity semanticSimilarityStrategy;
+    private StrategySimilarity documentSimilarityStrategy;
     private static MiniBabelNet instance;
     private static HashMap<String, String> fromInflectedToLemma = new HashMap<>();
     private static HashSet<String> lemmas = new HashSet<>();
@@ -33,38 +33,23 @@ public class MiniBabelNet implements Iterable<Synset>
 
     private MiniBabelNet()
     {
-        try (Stream<String> streamLemmatization = Files.lines(
-            Paths.get(lemmatization)); Stream<String> streamDictionary = Files.lines(
-            Paths.get(dictionary)); Stream<String> streamGlosses = Files.lines(
-            Paths.get(glosses)); Stream<String> streamRelations = Files.lines(Paths.get(relations)))
+        try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization)); Stream<String> streamDictionary = Files.lines(Paths.get(dictionary)); Stream<String> streamGlosses = Files.lines(Paths.get(glosses)); Stream<String> streamRelations = Files.lines(Paths.get(relations)))
 
         {
-            streamLemmatization.map(line -> line.split("\t")).forEach(
-                line -> {
-                    fromInflectedToLemma.put(line[0], line[1]);
-                    lemmas.add(line[1]);
-                });
+            streamLemmatization.map(line -> line.split("\t")).forEach(line ->
+                                                                      {
+                                                                          fromInflectedToLemma.put(line[0], line[1]);
+                                                                          lemmas.add(line[1]);
+                                                                      });
 
-            streamDictionary.map(line -> line.split("\t", 2)).filter(
-                line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0],
-                                                                                 new BabelSynset(
-                                                                                     line[0],
-                                                                                     new HashSet<>(
-                                                                                         Arrays
-                                                                                             .asList(
-                                                                                                 line[1]
-                                                                                                     .split(
-                                                                                                         "\t"))))));
+            streamDictionary.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0], new BabelSynset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
 
-            streamGlosses.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn"))
-                         .forEach(line -> synsetsMap.get(line[0]).setGlosses(
-                             new HashSet<>(Arrays.asList(line[1].split("\t")))));
+            streamGlosses.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.get(line[0]).setGlosses(new HashSet<>(Arrays.asList(line[1].split("\t")))));
 
             synsets = List.copyOf(synsetsMap.values());
             synsetSize = synsets.size();
 
-            streamRelations.map(line -> line.split("\t")).forEach(
-                line -> synsetsMap.get(line[0]).addRelation(line[2], synsetsMap.get(line[1])));
+            streamRelations.map(line -> line.split("\t")).forEach(line -> synsetsMap.get(line[0]).addRelation(line[2], synsetsMap.get(line[1])));
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -78,34 +63,21 @@ public class MiniBabelNet implements Iterable<Synset>
     }
 
     /**
-     * controlla se nel dizionario è presente la parola. se si restituisce il suo lemma (o se stessa
-     * se è essa stessa il lemma) o null nel caso in cui non sia presente nel dizionario
+     * controlla se nel dizionario è presente la parola. se si restituisce il suo lemma (o se stessa se è essa stessa il lemma) o null nel caso in cui non sia presente nel dizionario
      */
 
     public static String takeWord(String s)
     {
+        return fromInflectedToLemma.containsKey(s) ? fromInflectedToLemma.get(s) : lemmas.contains(s) ? s : null;
 
-        if (fromInflectedToLemma.containsKey(s))
-        {
-            return fromInflectedToLemma.get(s);
-        }
-        if (lemmas.contains(s))
-        {
-            return s;
-        }
-        return null;
     }
 
     /**
-     *
      * restituisce l’insieme di synset che contengono tra i loro sensi la parola in input
      */
     public List<Synset> getSynsets(String word)
     {
-        ArrayList<Synset> listOfSynsets = new ArrayList<>();
-        for (BabelSynset bs : synsets)
-        { if (bs.getLemmas().contains(fromInflectedToLemma.get(word))) listOfSynsets.add(bs); }
-        return listOfSynsets;
+        return synsets.stream().filter(x -> x.getLemmas().contains(fromInflectedToLemma.get(word))).collect(Collectors.toList());
     }
 
     /**
@@ -133,14 +105,12 @@ public class MiniBabelNet implements Iterable<Synset>
      */
 
     /**
-     * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.Synset fornito in input
-     * sotto forma di stringa.
+     * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.Synset fornito in input sotto forma di stringa.
      */
     public String getSynsetSummary(Synset s)
     {
-        BabelSynset      obj            = (BabelSynset) s;
-        StringBuilder    ret            = new StringBuilder(
-            obj.getID() + "\t" + obj.getPOS() + "\t");
+        BabelSynset obj = (BabelSynset) s;
+        StringBuilder ret = new StringBuilder(obj.getID() + "\t" + obj.getPOS() + "\t");
         Iterator<String> LemmasIterator = obj.getLemmas().iterator();
         while (LemmasIterator.hasNext())
         {
@@ -159,23 +129,59 @@ public class MiniBabelNet implements Iterable<Synset>
 
         ret.append("\t");
 
-        ret.append(obj.getRelations().entrySet().stream().flatMap(
-            entry -> entry.getValue().stream().map(bs -> bs.getID() + "_" + entry.getKey()))
-                      .collect(Collectors.joining(";")));
+        ret.append(obj.getRelations().entrySet().stream().flatMap(entry -> entry.getValue().stream().map(bs -> bs.getID() + "_" + entry.getKey())).collect(Collectors.joining(";")));
 
         return ret.toString();
     }
 
     /**
-     * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici
-     * (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
+     * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
      */
     public double computeSimilarity(LinguisticObject o1, LinguisticObject o2)
     {
-        if (lexicalSimilarityStrategy == null)
-            lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
-        System.out.println(o1);
-        return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
+        if (o1.getClass() != o2.getClass()){} //throw exception different type
+        if (o1 instanceof Word)  {
+            if (lexicalSimilarityStrategy == null) lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
+            return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
+        }
+        if (o1 instanceof BabelSynset) {
+            if (semanticSimilarityStrategy == null) semanticSimilarityStrategy = BabelSemanticSimilarity.getInstance();
+            return semanticSimilarityStrategy.computeSimilarity(o1,o2);
+        }
+        if (o1 instanceof Document) {
+            if (documentSimilarityStrategy == null) documentSimilarityStrategy = BabelDocumentSimilarity.getInstance();
+            return documentSimilarityStrategy.computeSimilarity(o1,o2);
+        }
+        return 0.0;
+
+    }
+
+    /**
+     *  Imposta l’algoritmo di calcolo della similarità tra parole (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+     */
+    public void setLexicalSimilarityStrategy(LexicalSimilarityStrategy strategy)
+    {
+        this.lexicalSimilarityStrategy = strategy;
+    }
+
+    /**
+     * Imposta l’algoritmo di calcolo della similarità tra synset (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+     */
+    public void setSemanticSimilarityStrategy(SemanticSimilarityStrategy strategy)
+    {
+        this.semanticSimilarityStrategy = strategy;
+    }
+
+    /**
+     *  Imposta l’algoritmo di calcolo della similarità tra documenti (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+     */
+    public void setDocumentSimilarityStrategy(DocumentSimilarityStrategy strategy){
+        this.documentSimilarityStrategy = strategy;
+    }
+
+    public int getSynsetSize()
+    {
+        return synsetSize;
     }
 
     @Override
@@ -197,18 +203,6 @@ public class MiniBabelNet implements Iterable<Synset>
                 return hasNext() ? synsets.get(k++) : null;
             }
         };
-    }
-    //TODO: Singleton & Iterable on synset
-
-    // setLexicalSimilarityStrategy(): Imposta l’algoritmo di calcolo della               similarità tra parole (di default, in fase di costruzione dell’oggetto         viene impostato l’algoritmo implementato dallo studente).
-
-    // setSemanticSimilarityStrategy(): Imposta l’algoritmo di calcolo della              similarità tra synset (di default, in fase di costruzione dell’oggetto         viene impostato l’algoritmo implementato dallo studente).
-
-    // setDocumentSimilarityStrategy(): Imposta l’algoritmo di calcolo della              similarità tra documenti (di default, in fase di costruzione dell’oggetto      viene impostato l’algoritmo implementato dallo studente).
-
-    public int getSynsetSize()
-    {
-        return synsetSize;
     }
 }
 

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -36,13 +37,13 @@ class BabelarityTest
     @Test
     public void testMiniBabelNet()
     {
-        Synset   synset  = miniBabelNet.getSynset("bn:00081546n");
-        String   summary = miniBabelNet.getSynsetSummary(synset);
-        String[] split   = summary.split("\t");
-        String   id      = split[0];
-        String   pos     = split[1];
-        String[] lemmi   = split[2].split(";");
-        String[] glosse  = split[3].split(";");
+        Synset synset = miniBabelNet.getSynset("bn:00081546n");
+        String summary = miniBabelNet.getSynsetSummary(synset);
+        String[] split = summary.split("\t");
+        String id = split[0];
+        String pos = split[1];
+        String[] lemmi = split[2].split(";");
+        String[] glosse = split[3].split(";");
         String[] relations = split[4].split(";");
         Arrays.sort(relations);
         assertTrue(lemmi[0].equals("word") && lemmi.length == 1);
@@ -56,13 +57,10 @@ class BabelarityTest
     @Test
     public void testDocumentManager()
     {
-        Document document = documentManager.parseDocument(
-            DOCUMENTS.resolve("Cultural_tourism.txt"));
+        Document document = documentManager.parseDocument(DOCUMENTS.resolve("Cultural_tourism.txt"));
         assertEquals(document.getTitle(), "Cultural tourism");
-        assertEquals(document.getContent().substring(0, 107),
-                     "Cultural tourism (or culture tourism) is the subset of tourism concerned with a country or region's culture");
-        Document document1 = documentManager.parseDocument(
-            DOCUMENTS.resolve("programming_language.txt"));
+        assertEquals(document.getContent().substring(0, 107), "Cultural tourism (or culture tourism) is the subset of tourism concerned with a country or region's culture");
+        Document document1 = documentManager.parseDocument(DOCUMENTS.resolve("programming_language.txt"));
         assertTrue(!document.getId().equals(document1.getId()));
         documentManager.saveDocument(document);
         assertEquals(document, documentManager.loadDocument(document.getId()));
@@ -81,8 +79,7 @@ class BabelarityTest
         String word2 = "exam";
         String word3 = "pop";
         String word4 = "rock";
-        similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3),
-                       Word.fromString(word4));
+        similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3), Word.fromString(word4));
     }
 
     @Test
@@ -92,8 +89,7 @@ class BabelarityTest
         String word2 = "ship";
         String word3 = "fear";
         String word4 = "emotion";
-        similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3),
-                       Word.fromString(word4));
+        similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3), Word.fromString(word4));
     }
 
     @Test
@@ -126,10 +122,8 @@ class BabelarityTest
     @Test
     public void testDocumentSimilarity1()
     {
-        Document d1 = documentManager.parseDocument(
-            DOCUMENTS.resolve("C_programming_language.txt"));
-        Document d2 = documentManager.parseDocument(
-            DOCUMENTS.resolve("Java_programming_language.txt"));
+        Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("C_programming_language.txt"));
+        Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
         Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Cristiano_Ronaldo.txt"));
         Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Thomas_Muller.txt"));
         similarityTest(d1, d2, d3, d4);
@@ -140,8 +134,7 @@ class BabelarityTest
     {
         Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Eugenio_Montale.txt"));
         Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Umberto_Eco.txt"));
-        Document d3 = documentManager.parseDocument(
-            DOCUMENTS.resolve("Tourism_in_the_Netherlands.txt"));
+        Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Tourism_in_the_Netherlands.txt"));
         Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Cultural_tourism.txt"));
         similarityTest(d1, d2, d3, d4);
     }
@@ -149,12 +142,10 @@ class BabelarityTest
     @Test
     public void testDocumentSimilarity3()
     {
-        Document d1 = documentManager.parseDocument(
-            DOCUMENTS.resolve("Council_of_the_European_Union.txt"));
+        Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Council_of_the_European_Union.txt"));
         Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("European_Union_law.txt"));
         Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Java_virtual_machine.txt"));
-        Document d4 = documentManager.parseDocument(
-            DOCUMENTS.resolve("Java_programming_language.txt"));
+        Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
         similarityTest(d1, d2, d3, d4);
     }
 
@@ -164,21 +155,17 @@ class BabelarityTest
         assertTrue(Double.compare(sim0, 1.0) == 0);
     }
 
-    public void similarityTest(LinguisticObject o1, LinguisticObject o2, LinguisticObject o3,
-                               LinguisticObject o4)
+    public void similarityTest(LinguisticObject o1, LinguisticObject o2, LinguisticObject o3, LinguisticObject o4)
     {
         double sim1 = miniBabelNet.computeSimilarity(o1, o2);
         double sim2 = miniBabelNet.computeSimilarity(o3, o4);
         double sim3 = miniBabelNet.computeSimilarity(o1, o3);
         double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-
-        System.out.println(sim1 +" "+ ((Word)o1).toString() + " | "+ ((Word)o2).toString());
-        System.out.println(sim2 +" "+ ((Word)o3).toString() + " | "+ ((Word)o4).toString());
-        System.out.println(sim3 +" "+ ((Word)o1).toString() + " | "+ ((Word)o3).toString());
-        System.out.println(sim4 +" "+ ((Word)o2).toString() + " | "+ ((Word)o4).toString());
+        System.out.println(sim1 + " " + ((Word) o1).toString() + " | " + ((Word) o2).toString());
+        System.out.println(sim2 + " " + ((Word) o3).toString() + " | " + ((Word) o4).toString());
+        System.out.println(sim3 + " " + ((Word) o1).toString() + " | " + ((Word) o3).toString());
+        System.out.println(sim4 + " " + ((Word) o2).toString() + " | " + ((Word) o4).toString());
         System.out.println("sim1 > sim3 && sim2 > sim4");
-
-
 
         assertTrue(sim1 > sim3 && sim2 > sim4);
     }
