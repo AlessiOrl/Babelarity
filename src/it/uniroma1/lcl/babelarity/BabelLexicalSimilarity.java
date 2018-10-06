@@ -19,11 +19,14 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     private static Path corpusDir = Paths.get("resources/corpus");
     private static Path stopWordPath = Paths.get("stopWords.txt");
     private static BabelLexicalSimilarity instance;
+    private List<File> corpusFiles;
     private HashMap<String, HashSet<Integer>> documentByWords;
     private Map<String, Integer> wordsIndexing;
     private HashMap<String, Integer> wordsCounter;
-    private static List<File> corpusFiles;
     private HashSet<String> stopWords;
+    private HashMap<String, Float[]> vectorizedWord;
+    private VectorizedWords vectorizedWords;
+
     //TODO:AGGIUNGERE PARAMETRO PER TENERE SALVATI I PMI GIA' CALCOALTI
 
     private BabelLexicalSimilarity()
@@ -32,6 +35,8 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         wordsCounter = new HashMap<>();
         wordsIndexing = new HashMap<>();
         documentByWords = new HashMap<>();
+        vectorizedWord = new HashMap<>();
+        vectorizedWords  = new VectorizedWords(1);
         this.parseStopWords();
         this.parseCorpus();
     }
@@ -119,21 +124,30 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
 
+
+
         String p = ((Word) o).toString();
         String p2 = ((Word) o2).toString();
+        System.out.println("INIZIO PARSE WORDS : " + p + " | " + p2);
+        long timeStart = System.currentTimeMillis();
         if (p.equals(p2)) return 1;
         double numeratore = 0;
         double denominatore1 = 0;
         double denominatore2 = 0;
-        Float[] vettore1 = generatePMI(p);
-        Float[] vettore2 = generatePMI(p2);
-        //TODO: salvare i dati generati
-        for (int x = 0; x < vettore1.length; x++)
+
+        if (!vectorizedWords.containsKey(p)) vectorizedWords.put(p, generatePMI(p));
+        if (!vectorizedWords.containsKey(p2)) vectorizedWords.put(p2, generatePMI(p2));
+
+        for (int x = 0; x < vectorizedWords.get(p).length; x++)
         {
-            numeratore += vettore1[x] * vettore2[x];
-            denominatore1 += Math.pow(vettore1[x], 2.0);
-            denominatore2 += Math.pow(vettore2[x], 2.0);
+            numeratore += vectorizedWords.get(p)[x] * vectorizedWords.get(p2)[x];
+            denominatore1 += Math.pow(vectorizedWords.get(p)[x], 2.0);
+            denominatore2 += Math.pow(vectorizedWords.get(p2)[x], 2.0);
         }
+        long timeEnd = System.currentTimeMillis();
+        long timeTakenSc = (timeEnd - timeStart) ;
+        System.out.println("FINE PARSING time : " + timeTakenSc);
+        System.out.println("-----------------------------------");
         return numeratore / (Math.sqrt(denominatore1) * Math.sqrt(denominatore2));
     }
 
