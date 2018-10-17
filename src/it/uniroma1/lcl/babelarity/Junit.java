@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -53,6 +55,7 @@ class BabelarityTest
         assertEquals(relations[2], "bn:00000239n_has-kind");
     }
 
+
     @Test
     public void testDocumentManager()
     {
@@ -90,7 +93,7 @@ class BabelarityTest
         String word4 = "emotion";
         similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3), Word.fromString(word4));
     }
-
+/*
     @Test
     public void testSemanticSimilarityIdentity()
     {
@@ -147,7 +150,7 @@ class BabelarityTest
         Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
         similarityTest(d1, d2, d3, d4);
     }
-
+*/
     public void testSimilarityIdentity(LinguisticObject o1)
     {
         double sim0 = miniBabelNet.computeSimilarity(o1, o1);

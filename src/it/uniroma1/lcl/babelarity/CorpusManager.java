@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.Collectors;
-import javax.print.Doc;
 
 /**
  * RESPONSABILE DEL PARSING
@@ -27,6 +26,7 @@ public class CorpusManager implements Iterable<Document>
 
     private CorpusManager()
     {
+        parsedDocuments = new ArrayList<>();
     }
 
 

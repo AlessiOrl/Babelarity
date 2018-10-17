@@ -27,8 +27,8 @@ public class MiniBabelNet implements Iterable<Synset>
     private static HashMap<String, String> fromInflectedToLemma = new HashMap<>();
     private static HashSet<String> lemmas = new HashSet<>();
 
-    private HashMap<String, BabelSynset> synsetsMap = new HashMap<>();
-    private List<BabelSynset> synsets = new ArrayList<>();
+    private HashMap<String, Synset> synsetsMap = new HashMap<>();
+    private List<Synset> synsets = new ArrayList<>();
     private int synsetSize;
 
     private MiniBabelNet()
@@ -41,7 +41,7 @@ public class MiniBabelNet implements Iterable<Synset>
         {
             streamLemmatization.map(line -> line.split("\t")).forEach(line -> { fromInflectedToLemma.put(line[0], line[1]); lemmas.add(line[1]);});
 
-            streamDictionary.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0], new BabelSynset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
+            streamDictionary.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.put(line[0], new Synset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
 
             streamGlosses.map(line -> line.split("\t", 2)).filter(line -> line[0].startsWith("bn")).forEach(line -> synsetsMap.get(line[0]).setGlosses(new HashSet<>(Arrays.asList(line[1].split("\t")))));
 
@@ -100,7 +100,7 @@ public class MiniBabelNet implements Iterable<Synset>
      */
     public String getSynsetSummary(Synset s)
     {
-        BabelSynset obj = (BabelSynset) s;
+        Synset obj = (Synset) s;
         StringBuilder ret = new StringBuilder(obj.getID() + "\t" + obj.getPOS() + "\t");
         Iterator<String> LemmasIterator = obj.getLemmas().iterator();
         while (LemmasIterator.hasNext())
@@ -136,7 +136,7 @@ public class MiniBabelNet implements Iterable<Synset>
             if (lexicalSimilarityStrategy == null) lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
             return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
         }
-        if (o1 instanceof BabelSynset)
+        if (o1 instanceof Synset)
         {
             if (semanticSimilarityStrategy == null) semanticSimilarityStrategy = BabelSemanticSimilarity.getInstance();
             return semanticSimilarityStrategy.computeSimilarity(o1, o2);

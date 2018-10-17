@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.text.html.parser.Entity;
 
 public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {
@@ -66,7 +65,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         {
             try
             {
-                String[] words =  new String(Files.readAllBytes(corpusFiles.get(x).toPath()), StandardCharsets.UTF_8).replaceAll("\\W", " ").toLowerCase().split("\\s+");
+                String[] words = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), StandardCharsets.UTF_8).replaceAll("\\W", " ").toLowerCase().split("\\s+");
 
                 Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(stopWords.contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
