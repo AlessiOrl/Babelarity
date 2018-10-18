@@ -12,13 +12,13 @@ public class Synset implements LinguisticObject
     private Pos pos;
     private HashSet<String> lemmas;
     private HashSet<String> glosses;
-    private HashSet<Synset> fathers;
+    private HashSet<Synset> NearbyNodes;
     private HashMap<String, ArrayList<Synset>> relations;
 
     public Synset(String id, HashSet<String> lemmas)
     {
         this.relations = new HashMap<>();
-        this.fathers = new HashSet<>();
+        this.NearbyNodes = new HashSet<>();
         this.id = id;
         this.lemmas = lemmas;
         switch (id.charAt(id.length() - 1))
@@ -92,15 +92,21 @@ public class Synset implements LinguisticObject
     {
         if (relations.containsKey(type)) relations.get(type).add(synset);
         else relations.put(type, new ArrayList<>(Arrays.asList(synset)));
-        synset.addFather(this);
+        synset.addNeighbors(this);
+        this.addNeighbors(synset);
     }
 
     /**
      * aggiunge alla lista dei padri il proprio padre
      */
-    public void addFather(Synset father)
+    public void addNeighbors(Synset neighbors)
     {
-        this.fathers.add(father);
+        this.NearbyNodes.add(neighbors);
+    }
+
+    public HashSet<Synset> getNearbyNodes()
+    {
+        return NearbyNodes;
     }
 
     public ArrayList<Synset> getRelationByType(String type)

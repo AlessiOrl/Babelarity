@@ -1,6 +1,7 @@
 package it.uniroma1.lcl.babelarity;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
 {
@@ -28,6 +29,43 @@ public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
     {
         HashSet<Synset> visitatedNodes = new HashSet<>();
         return 0;
+    }
+
+    public int FindBestPath(Synset root,Synset dest)
+    {
+        if (root.equals(dest)) return 0;
+        //create a set of all the nodes already visited
+        HashSet<Synset> visited = new HashSet<>();
+
+        // Create a queue for the pathFinder
+        LinkedList<Synset> queue = new LinkedList<>();
+
+        //add the root in the seen nodes and add him in to the queue
+        visited.add(root);
+        queue.add(root);
+        int counter = 0;
+
+        while (queue.size() != 0)
+        {
+            // Dequeue a vertex from queue
+            root = queue.poll();
+
+            // Get all adjacent vertices of the dequeued vertex
+            // If a adjacent has not been visited, then mark it visited and enqueue it
+            // If the nearbyNode is the dest node then return the counter+1 and exit the loop
+            for (Synset syn : root.getNearbyNodes())
+            {
+                if (!visited.contains(syn))
+                {
+                    if (syn.equals(dest)) return ++counter;
+
+                    visited.add(syn);
+                    queue.add(syn);
+                }
+            }
+        }
+        //if no path has been found return -1
+        return -1;
     }
 
     @Override
