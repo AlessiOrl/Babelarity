@@ -29,7 +29,7 @@ public class MiniBabelNet implements Iterable<Synset>
 
     private HashMap<String, Synset> synsetsMap = new HashMap<>();
     private List<Synset> synsets = new ArrayList<>();
-    private int synsetSize;
+    public int synsetSize;
 
     private MiniBabelNet()
     {
@@ -76,7 +76,7 @@ public class MiniBabelNet implements Iterable<Synset>
      */
     public List<Synset> getSynsets(String word)
     {
-        return synsets.stream().filter(x -> x.getLemmas().contains(fromInflectedToLemma.get(word))).collect(Collectors.toList());
+        return synsets.stream().filter(x -> x.getLemmas().contains(takeWord(word))).collect(Collectors.toList());
     }
 
     /**
