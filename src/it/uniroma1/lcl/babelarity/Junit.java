@@ -163,9 +163,7 @@ class BabelarityTest
     */
     public void testSimilarityIdentity(LinguisticObject o1)
     {
-        System.out.println("start similarity");
         double sim0 = miniBabelNet.computeSimilarity(o1, o1);
-        System.out.println(BabelSemanticSimilarity.getInstance().getMediumDepth());
         assertTrue(Double.compare(sim0, 1.0) == 0);
     }
 
@@ -173,13 +171,16 @@ class BabelarityTest
     {
         System.out.println("start similarity");
         double sim1 = miniBabelNet.computeSimilarity(o1, o2);
+        System.out.println("done 1");
         double sim2 = miniBabelNet.computeSimilarity(o3, o4);
+        System.out.println("done 2");
         double sim3 = miniBabelNet.computeSimilarity(o1, o3);
+        System.out.println("done 3");
         double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-        System.out.println(o1 +"  "  +o2 + " || "  +sim1 );
-        System.out.println(o3 +"  "  +o4 + " || "  +sim2 );
-        System.out.println(o1 +"  "  +o3 + " || "  +sim3 );
-        System.out.println(o2 +"  "  +o4 + " || "  +sim4 );
+        System.out.println(((Synset)o1).getID() +"  "  +((Synset)o2).getID() + " || "  +sim1 );
+        System.out.println(((Synset)o3).getID() +"  "  +((Synset)o4).getID() + " || "  +sim2 );
+        System.out.println(((Synset)o1).getID() +"  "  +((Synset)o3).getID() + " || "  +sim3 );
+        System.out.println(((Synset)o2).getID() +"  "  +((Synset)o4).getID() + " || "  +sim4 );
 
 
         assertTrue(sim1 > sim3 && sim2 > sim4);

@@ -15,12 +15,14 @@ public class Synset implements LinguisticObject
     private HashSet<String> glosses;
     //todo: deve diventare un set di figli (opposto di is-a)
     private HashSet<Synset> NearbyNodes;
+    private HashSet<Synset> isaOpposite;
     private HashMap<String, ArrayList<Synset>> relations;
 
     public Synset(String id, HashSet<String> lemmas)
     {
         this.relations = new HashMap<>();
         this.NearbyNodes = new HashSet<>();
+        this.isaOpposite = new HashSet<>();
         this.id = id;
         this.lemmas = lemmas;
         switch (id.charAt(id.length() - 1))
@@ -94,8 +96,8 @@ public class Synset implements LinguisticObject
     {
         if (relations.containsKey(type)) relations.get(type).add(synset);
         else relations.put(type, new ArrayList<>(Arrays.asList(synset)));
-        synset.addNeighbors(this);
-        this.addNeighbors(synset);
+        if(type.equals("is-a"))
+            synset.addisaOpposite(this);
     }
 
     /**
@@ -105,10 +107,21 @@ public class Synset implements LinguisticObject
     {
         this.NearbyNodes.add(neighbors);
     }
-
     public HashSet<Synset> getNearbyNodes()
     {
         return NearbyNodes;
+    }
+
+    /**
+     * aggiunge alla lista dei figli
+     */
+    public void addisaOpposite(Synset son)
+    {
+        this.isaOpposite.add(son);
+    }
+    public HashSet<Synset> getIsaOpposite()
+    {
+        return isaOpposite;
     }
 
     public ArrayList<Synset> getRelationByType(String type)
@@ -119,12 +132,6 @@ public class Synset implements LinguisticObject
     public HashMap<String, ArrayList<Synset>> getRelations()
     {
         return relations;
-    }
-
-    @Override
-    public String toString()
-    {
-        return id + " || " + lemmas.toString() + " || " + glosses.toString();
     }
 
     @Override
@@ -140,5 +147,11 @@ public class Synset implements LinguisticObject
         if (obj == this) return true;
         if (!(obj instanceof Synset)) return false;
         return ((Synset) obj).id.equals(this.id);
+    }
+
+    @Override
+    public String toString()
+    {
+        return id + " || " + lemmas.toString() + " || " + glosses.toString();
     }
 }

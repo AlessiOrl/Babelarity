@@ -11,7 +11,7 @@ public class Document implements LinguisticObject, Serializable
     private String title;
     private String content;
 
-    public Document(String title, String id, String content, Path path)
+    public Document(String title, String id, String content,Path path)
     {
         this.id = id;
         this.title = title;
