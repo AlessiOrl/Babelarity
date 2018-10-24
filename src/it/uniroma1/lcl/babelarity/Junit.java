@@ -81,19 +81,7 @@ class BabelarityTest
         String word4 = "rock";
         similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3), Word.fromString(word4));
     }
-/*
-    @Test
-    public void MyTest()
-    {
-        Synset root = miniBabelNet.getSynset("bn:00094686v");
-        Synset dest = miniBabelNet.getSynset("bn:00085623v");
-        BabelSemanticSimilarity semantc = BabelSemanticSimilarity.getInstance();
-        System.out.println("INIZIO FIND BEST PATH");
-        int ret = semantc.FindBestPath(root, dest);
-        System.out.println(ret);
-        assertEquals(5, ret);
-    }
-*/
+
     @Test
     public void testLexicalSimilarity2()
     {
@@ -171,16 +159,13 @@ class BabelarityTest
     {
         System.out.println("start similarity");
         double sim1 = miniBabelNet.computeSimilarity(o1, o2);
-        System.out.println("done 1");
+        System.out.println("done 1 " + sim1);
         double sim2 = miniBabelNet.computeSimilarity(o3, o4);
-        System.out.println("done 2");
+        System.out.println("done 2 " + sim2);
         double sim3 = miniBabelNet.computeSimilarity(o1, o3);
-        System.out.println("done 3");
+        System.out.println("done 3  "+ sim3);
         double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-        System.out.println(((Synset)o1).getID() +"  "  +((Synset)o2).getID() + " || "  +sim1 );
-        System.out.println(((Synset)o3).getID() +"  "  +((Synset)o4).getID() + " || "  +sim2 );
-        System.out.println(((Synset)o1).getID() +"  "  +((Synset)o3).getID() + " || "  +sim3 );
-        System.out.println(((Synset)o2).getID() +"  "  +((Synset)o4).getID() + " || "  +sim4 );
+        System.out.println("done 4  "+ sim4);
 
 
         assertTrue(sim1 > sim3 && sim2 > sim4);

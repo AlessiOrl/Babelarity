@@ -13,15 +13,12 @@ public class Synset implements LinguisticObject
     private Pos pos;
     private HashSet<String> lemmas;
     private HashSet<String> glosses;
-    //todo: deve diventare un set di figli (opposto di is-a)
-    private HashSet<Synset> NearbyNodes;
     private HashSet<Synset> isaOpposite;
     private HashMap<String, ArrayList<Synset>> relations;
 
     public Synset(String id, HashSet<String> lemmas)
     {
         this.relations = new HashMap<>();
-        this.NearbyNodes = new HashSet<>();
         this.isaOpposite = new HashSet<>();
         this.id = id;
         this.lemmas = lemmas;
@@ -99,19 +96,6 @@ public class Synset implements LinguisticObject
         if(type.equals("is-a"))
             synset.addisaOpposite(this);
     }
-
-    /**
-     * aggiunge alla lista dei padri il proprio padre
-     */
-    public void addNeighbors(Synset neighbors)
-    {
-        this.NearbyNodes.add(neighbors);
-    }
-    public HashSet<Synset> getNearbyNodes()
-    {
-        return NearbyNodes;
-    }
-
     /**
      * aggiunge alla lista dei figli
      */
