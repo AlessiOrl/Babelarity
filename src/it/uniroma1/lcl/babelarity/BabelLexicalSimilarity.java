@@ -21,13 +21,11 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {
 
     private static Path corpusDir = Paths.get("resources/corpus");
-    private static Path stopWordPath = Paths.get("stopWords.txt");
     private static BabelLexicalSimilarity instance;
     private List<File> corpusFiles;
     private HashMap<String, HashSet<Integer>> documentByWords;
     private Map<String, Integer> wordsIndexing;
     private HashMap<String, Integer> wordsCounter;
-    private HashSet<String> stopWords;
     private VectorizedWords vectorizedWords;
 
     private BabelLexicalSimilarity()
@@ -37,19 +35,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         wordsIndexing = new HashMap<>();
         documentByWords = new HashMap<>();
         vectorizedWords = new VectorizedWords();
-        this.parseStopWords();
         this.parseCorpus();
-    }
-
-    private void parseStopWords()
-    {
-        try (Stream<String> streamStopWords = Files.lines(stopWordPath))
-        {
-            stopWords = streamStopWords.collect(Collectors.toCollection(HashSet::new));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     public static BabelLexicalSimilarity getInstance()
@@ -67,7 +53,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
             {
                 String[] words = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), StandardCharsets.UTF_8).replaceAll("\\W", " ").toLowerCase().split("\\s+");
 
-                Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(stopWords.contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(CorpusManager.getStopWords().contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
                 for (String s : DocumentInfo.keySet())
                 {

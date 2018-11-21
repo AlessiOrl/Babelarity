@@ -118,7 +118,7 @@ class BabelarityTest
             Synset s4 = miniBabelNet.getSynset("bn:00010605n");
             similarityTest(s1, s2, s3, s4);
         }
-/*
+
         @Test
         public void testDocumentSimilarity1()
         {
@@ -148,7 +148,7 @@ class BabelarityTest
             Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
             similarityTest(d1, d2, d3, d4);
         }
-    */
+
     public void testSimilarityIdentity(LinguisticObject o1)
     {
         double sim0 = miniBabelNet.computeSimilarity(o1, o1);

@@ -103,23 +103,16 @@ public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
     private int bfs(Synset root, Synset dest, HashMap<Synset, Integer> visited)
     {
         if (root.equals(dest)) return 0;
-        // Create a queue for the pathFinder
+
         LinkedList<Synset> queue = new LinkedList<>();
-/*
-        HashMap<Synset,Integer> visited = new HashMap<>();
-        //add the root in the seen nodes and add him in to the queue
-        visited.put(root, 0);*/
+
+        // visited.put(root, 0);
         queue.add(root);
 
         Synset vertex;
         while (queue.size() != 0)
         {
-            // Dequeue a vertex from queue
             vertex = queue.poll();
-
-            // Get all adjacent vertices of the dequeued vertex
-            // If a adjacent has not been visited, then mark it visited and enqueue it
-            // If the nearbyNode is the dest node then return the counter+1 and exit the loop
             for (Synset syn : vertex.getIsaOpposite())
             {
                 if (!visited.containsKey(syn))
@@ -166,14 +159,16 @@ public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
         if (o.equals(o2)) return 1;
-        System.out.println("starting compure similarity between " + ((Synset) o).getID() + " and " + ((Synset) o2).getID());
-        int path = FindBestPath((Synset) o2, (Synset) o);
+        return 1 / ((double) findBestPathBasic((Synset) o, (Synset) o2) + 1);
+
+        /*System.out.println("starting compure similarity between " + ((Synset) o).getID() + " and " + ((Synset) o2).getID());
+        int path = FindBestPath((Synset) o, (Synset) o2);
         if (path == -1)
         {
             System.out.println("path don't found, triying the base one");
-            return 1 / ((double) findBestPathBasic((Synset) o2, (Synset) o) + 1);
+            return 1 / ((double) findBestPathBasic((Synset) o, (Synset) o2) + 1);
         }
-        return (double) path / getMaxDepth();
+        return -Math.log((double) path / (2*getMaxDepth()));*/
     }
 
     private int getMaxDepth()

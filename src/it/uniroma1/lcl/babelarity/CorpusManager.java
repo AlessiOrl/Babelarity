@@ -8,9 +8,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * RESPONSABILE DEL PARSING
@@ -20,20 +23,40 @@ import java.util.stream.Collectors;
 
 public class CorpusManager implements Iterable<Document>
 {
-
+    private static Path stopWordPath = Paths.get("stopWords.txt");
     private static CorpusManager instance;
-    private static ArrayList<Document> parsedDocuments;
+    private static HashSet<Document> parsedDocuments;
 
+    private static HashSet<String> stopWords;
     private CorpusManager()
     {
-        parsedDocuments = new ArrayList<>();
+
+        parsedDocuments = new HashSet<>();
+        this.parseStopWords();
+
     }
 
 
-    static CorpusManager getInstance()
+    public static CorpusManager getInstance()
     {
         if (instance == null) instance = new CorpusManager();
         return instance;
+    }
+
+
+    private static void parseStopWords()
+    {
+        try (Stream<String> streamStopWords = Files.lines(stopWordPath))
+        {
+            stopWords = streamStopWords.collect(Collectors.toCollection(HashSet::new));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public static HashSet<String> getStopWords()
+    {
+        return stopWords;
     }
 
     /**
@@ -43,7 +66,6 @@ public class CorpusManager implements Iterable<Document>
     {
         try (BufferedReader reader = Files.newBufferedReader(path))
         {
-
             String[] fstLine = reader.readLine().split("\t");
             Document doc = new Document(fstLine[0], fstLine[1], reader.lines().collect(Collectors.joining("\n")), path);
             parsedDocuments.add(doc);
@@ -79,25 +101,10 @@ public class CorpusManager implements Iterable<Document>
         } catch (IOException e) { System.out.println(e); }
     }
 
+
     @Override
     public Iterator<Document> iterator()
     {
-        return new Iterator<>()
-        {
-            private int k;
-
-            @Override
-            public boolean hasNext()
-            {
-                return k < parsedDocuments.size();
-            }
-
-            @Override
-            public Document next()
-            {
-                return hasNext() ? parsedDocuments.get(k++) : null;
-            }
-        };
-
+        return parsedDocuments.iterator();
     }
 }
