@@ -104,7 +104,6 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         return vettore;
     }
 
-    //restituisce il valore di similarità sottoforma di double
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
