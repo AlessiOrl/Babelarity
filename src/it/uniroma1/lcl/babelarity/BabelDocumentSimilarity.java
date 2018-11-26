@@ -21,7 +21,7 @@ public class BabelDocumentSimilarity implements DocumentSimilarityStrategy
         if (instance == null) instance = new BabelDocumentSimilarity();
         return instance;
     }
-
+//todo: da scaricare
 
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
