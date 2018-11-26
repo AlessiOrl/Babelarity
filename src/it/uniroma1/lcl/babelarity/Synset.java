@@ -93,9 +93,9 @@ public class Synset implements LinguisticObject
     {
         if (relations.containsKey(type)) relations.get(type).add(synset);
         else relations.put(type, new ArrayList<>(Arrays.asList(synset)));
-        if(type.equals("is-a"))
-            synset.addisaOpposite(this);
+        if (type.equals("is-a")) synset.addisaOpposite(this);
     }
+
     /**
      * aggiunge alla lista dei figli
      */
@@ -103,6 +103,7 @@ public class Synset implements LinguisticObject
     {
         this.isaOpposite.add(son);
     }
+
     public HashSet<Synset> getIsaOpposite()
     {
         return isaOpposite;
@@ -127,15 +128,20 @@ public class Synset implements LinguisticObject
     @Override
     public boolean equals(Object obj)
     {
-        if (obj == null) return false;
         if (obj == this) return true;
+        if (obj == null) return false;
         if (!(obj instanceof Synset)) return false;
+        if (((Synset) obj).glosses.size() != this.glosses.size()) return false;
         return ((Synset) obj).id.equals(this.id);
     }
 
     @Override
-    public String toString()
+/*    public String toString()
     {
         return id + " || " + lemmas.toString() + " || " + glosses.toString();
+    }*/
+    public String toString()
+    {
+        return id;
     }
 }

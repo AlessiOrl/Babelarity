@@ -21,14 +21,12 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
 {
 
     private static Path corpusDir = Paths.get("resources/corpus");
-    private static Path stopWordPath = Paths.get("stopWords.txt");
     private static BabelLexicalSimilarity instance;
     private List<File> corpusFiles;
     private HashMap<String, HashSet<Integer>> documentByWords;
     private Map<String, Integer> wordsIndexing;
     private HashMap<String, Integer> wordsCounter;
-    private HashSet<String> stopWords;
-    private VectorizedWords vectorizedWords;
+    private VectorizedLinguisticObj<Word,Float> vectorizedWords;
 
     private BabelLexicalSimilarity()
     {
@@ -36,20 +34,8 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
         wordsCounter = new HashMap<>();
         wordsIndexing = new HashMap<>();
         documentByWords = new HashMap<>();
-        vectorizedWords = new VectorizedWords();
-        this.parseStopWords();
+        vectorizedWords = new VectorizedLinguisticObj<>();
         this.parseCorpus();
-    }
-
-    private void parseStopWords()
-    {
-        try (Stream<String> streamStopWords = Files.lines(stopWordPath))
-        {
-            stopWords = streamStopWords.collect(Collectors.toCollection(HashSet::new));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     public static BabelLexicalSimilarity getInstance()
@@ -67,7 +53,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
             {
                 String[] words = new String(Files.readAllBytes(corpusFiles.get(x).toPath()), StandardCharsets.UTF_8).replaceAll("\\W", " ").toLowerCase().split("\\s+");
 
-                Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(stopWords.contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                Map<String, Long> DocumentInfo = Arrays.stream(words).filter(s -> !(CorpusManager.getStopWords().contains(s))).map(MiniBabelNet::takeWord).filter(Objects::nonNull).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
                 for (String s : DocumentInfo.keySet())
                 {
@@ -80,7 +66,6 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
             {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -107,15 +92,15 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
-        String p = ((Word) o).toString();
-        String p2 = ((Word) o2).toString();
+        Word p = (Word)o;
+        Word p2 = (Word)o2;
         if (p.equals(p2)) return 1;
         double numeratore = 0;
         double denominatore1 = 0;
         double denominatore2 = 0;
 
-        if (!vectorizedWords.containsKey(p)) vectorizedWords.put(p, generatePMI(p));
-        if (!vectorizedWords.containsKey(p2)) vectorizedWords.put(p2, generatePMI(p2));
+        if (!vectorizedWords.containsKey(p)) vectorizedWords.put((Word)o, generatePMI(p.toString()));
+        if (!vectorizedWords.containsKey(p2)) vectorizedWords.put((Word)o2, generatePMI(p2.toString()));
 
         for (int x = 0; x < vectorizedWords.get(p).length; x++)
         {

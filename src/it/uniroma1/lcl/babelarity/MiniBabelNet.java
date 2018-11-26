@@ -28,7 +28,7 @@ public class MiniBabelNet implements Iterable<Synset>
     private static HashSet<String> lemmas = new HashSet<>();
 
     private HashMap<String, Synset> synsetsMap = new HashMap<>();
-    private List<Synset> synsets = new ArrayList<>();
+    private static List<Synset> synsets = new ArrayList<>();
     public int synsetSize;
 
     private MiniBabelNet()
@@ -79,6 +79,10 @@ public class MiniBabelNet implements Iterable<Synset>
         return synsets.stream().filter(x -> x.getLemmas().contains(takeWord(word))).collect(Collectors.toList());
     }
 
+    public static List<Synset> getAllSynsets()
+    {
+        return synsets;
+    }
     /**
      * restituisce il synset relativo all’id specificato
      */

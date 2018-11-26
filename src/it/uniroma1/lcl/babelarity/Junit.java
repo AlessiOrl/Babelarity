@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -92,62 +94,73 @@ class BabelarityTest
         similarityTest(Word.fromString(word1), Word.fromString(word2), Word.fromString(word3), Word.fromString(word4));
     }
 
-        @Test
-        public void testSemanticSimilarityIdentity()
-        {
-            Synset synset1 = miniBabelNet.getSynset("bn:00036821n");
-            testSimilarityIdentity(synset1);
-        }
+    @Test
+    public void testSemanticSimilarityIdentity()
+    {
+        Synset synset1 = miniBabelNet.getSynset("bn:00036821n");
+        testSimilarityIdentity(synset1);
+    }
 
-        @Test
-        public void testSemanticSimilarity1()
-        {
-            Synset s1 = miniBabelNet.getSynset("bn:00034472n");
-            Synset s2 = miniBabelNet.getSynset("bn:00015008n");
-            Synset s3 = miniBabelNet.getSynset("bn:00081546n");
-            Synset s4 = miniBabelNet.getSynset("bn:00070528n");
-            similarityTest(s1, s2, s3, s4);
-        }
+    @Test
+    public void testSemanticSimilarity1()
+    {
+        Synset s1 = miniBabelNet.getSynset("bn:00034472n");
+        Synset s2 = miniBabelNet.getSynset("bn:00015008n");
+        Synset s3 = miniBabelNet.getSynset("bn:00081546n");
+        Synset s4 = miniBabelNet.getSynset("bn:00070528n");
+        similarityTest(s1, s2, s3, s4);
+    }
 
-        @Test
-        public void testSemanticSimilarity2()
-        {
-            Synset s1 = miniBabelNet.getSynset("bn:00024712n");
-            Synset s2 = miniBabelNet.getSynset("bn:00029345n");
-            Synset s3 = miniBabelNet.getSynset("bn:00035023n");
-            Synset s4 = miniBabelNet.getSynset("bn:00010605n");
-            similarityTest(s1, s2, s3, s4);
-        }
+    @Test
+    public void testSemanticSimilarity2()
+    {
+        Synset s1 = miniBabelNet.getSynset("bn:00024712n");
+        Synset s2 = miniBabelNet.getSynset("bn:00029345n");
+        Synset s3 = miniBabelNet.getSynset("bn:00035023n");
+        Synset s4 = miniBabelNet.getSynset("bn:00010605n");
+        similarityTest(s1, s2, s3, s4);
+    }
 
-        @Test
-        public void testDocumentSimilarity1()
-        {
-            Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("C_programming_language.txt"));
-            Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
-            Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Cristiano_Ronaldo.txt"));
-            Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Thomas_Muller.txt"));
-            similarityTest(d1, d2, d3, d4);
-        }
 
-        @Test
-        public void testDocumentSimilarity2()
-        {
-            Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Eugenio_Montale.txt"));
-            Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Umberto_Eco.txt"));
-            Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Tourism_in_the_Netherlands.txt"));
-            Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Cultural_tourism.txt"));
-            similarityTest(d1, d2, d3, d4);
-        }
+    @Test
+    public void myTest()
+    {
+        System.out.println(" SIMILARITY 1 : ");
+        testDocumentSimilarity1();
+        System.out.println(" \nSIMILARITY 2 : ");
+        testDocumentSimilarity2();
+        System.out.println(" \nSIMILARITY 3 : ");
+        testDocumentSimilarity3();
+    }
+    @Test
+    public void testDocumentSimilarity1()
+    {
+        Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("C_programming_language.txt"));
+        Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
+        Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Cristiano_Ronaldo.txt"));
+        Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Thomas_Muller.txt"));
+        similarityTest(d1, d2, d3, d4);
+    }
 
-        @Test
-        public void testDocumentSimilarity3()
-        {
-            Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Council_of_the_European_Union.txt"));
-            Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("European_Union_law.txt"));
-            Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Java_virtual_machine.txt"));
-            Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
-            similarityTest(d1, d2, d3, d4);
-        }
+    @Test
+    public void testDocumentSimilarity2()
+    {
+        Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Eugenio_Montale.txt"));
+        Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("Umberto_Eco.txt"));
+        Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Tourism_in_the_Netherlands.txt"));
+        Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Cultural_tourism.txt"));
+        similarityTest(d1, d2, d3, d4);
+    }
+
+    @Test
+    public void testDocumentSimilarity3()
+    {
+        Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("Council_of_the_European_Union.txt"));
+        Document d2 = documentManager.parseDocument(DOCUMENTS.resolve("European_Union_law.txt"));
+        Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Java_virtual_machine.txt"));
+        Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Java_programming_language.txt"));
+        similarityTest(d1, d2, d3, d4);
+    }
 
     public void testSimilarityIdentity(LinguisticObject o1)
     {
@@ -163,10 +176,9 @@ class BabelarityTest
         double sim2 = miniBabelNet.computeSimilarity(o3, o4);
         System.out.println("done 2 " + sim2);
         double sim3 = miniBabelNet.computeSimilarity(o1, o3);
-        System.out.println("done 3  "+ sim3);
+        System.out.println("done 3  " + sim3);
         double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-        System.out.println("done 4  "+ sim4);
-
+        System.out.println("done 4  " + sim4);
 
         assertTrue(sim1 > sim3 && sim2 > sim4);
     }
