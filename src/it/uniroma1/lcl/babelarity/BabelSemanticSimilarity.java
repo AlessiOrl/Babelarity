@@ -158,6 +158,7 @@ public class BabelSemanticSimilarity implements SemanticSimilarityStrategy
     @Override
     public double computeSimilarity(LinguisticObject o, LinguisticObject o2)
     {
+
         if (o.equals(o2)) return 1;
         return 1 / ((double) findBestPathBasic((Synset) o, (Synset) o2) + 1);
 

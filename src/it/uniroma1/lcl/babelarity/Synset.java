@@ -131,13 +131,17 @@ public class Synset implements LinguisticObject
         if (obj == this) return true;
         if (obj == null) return false;
         if (!(obj instanceof Synset)) return false;
-        if (((Synset) obj).glosses.size() == this.glosses.size()) return true;
+        if (((Synset) obj).glosses.size() != this.glosses.size()) return false;
         return ((Synset) obj).id.equals(this.id);
     }
 
     @Override
-    public String toString()
+/*    public String toString()
     {
         return id + " || " + lemmas.toString() + " || " + glosses.toString();
+    }*/
+    public String toString()
+    {
+        return id;
     }
 }
