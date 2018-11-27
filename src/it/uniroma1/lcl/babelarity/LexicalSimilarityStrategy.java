@@ -1,6 +1,5 @@
 package it.uniroma1.lcl.babelarity;
 
-public interface LexicalSimilarityStrategy extends StrategySimilarity
-{
+public interface LexicalSimilarityStrategy extends StrategySimilarity {
 
 }
