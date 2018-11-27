@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BabelLexicalSimilarity implements LexicalSimilarityStrategy {
 
-  private static Path corpusDir = Paths.get("resources/corpus");
+  //TODO: PROVARE A CONTARE LE OCCORRENZE SOLO UNA VOLTA PER DOCUMENTO
   private static BabelLexicalSimilarity instance;
   private List<File> corpusFiles;
   private HashMap<String, HashSet<Integer>> documentByWords;
@@ -21,7 +19,7 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy {
   private VectorizedLinguisticObj<Word, Float> vectorizedWords;
 
   private BabelLexicalSimilarity() {
-    corpusFiles = List.of(corpusDir.toFile().listFiles());
+    corpusFiles = List.of(Objects.requireNonNull(RelativePaths.CORPUS.toFile().listFiles()));
     wordsCounter = new HashMap<>();
     wordsIndexing = new HashMap<>();
     documentByWords = new HashMap<>();

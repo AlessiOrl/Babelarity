@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 public class BabelSemanticSimilarity implements SemanticSimilarityStrategy {
 
+  //TODO: PROVARE AD IMPLEMENTARE LA SIMILARITA' AVANZATA
   private static BabelSemanticSimilarity instance;
   private int maxDepth;
   private HashSet<Synset> roots;

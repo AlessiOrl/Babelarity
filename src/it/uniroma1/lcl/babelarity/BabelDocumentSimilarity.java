@@ -57,6 +57,7 @@ public class BabelDocumentSimilarity implements DocumentSimilarityStrategy {
         node = docGraph.getNodes()[index];
       } else {
         Synset[] neighbor = docGraph.getNeighbors(node);
+        //TODO: Volendo togliere i nodi senza vicini già nel DocumentGraph
         index = neighbor.length == 0 ? rand.nextInt(docGraph.getNodes().length) : rand.nextInt(neighbor.length);
         node = neighbor.length > 0 ? neighbor[index] : docGraph.getNodes()[index];
       }

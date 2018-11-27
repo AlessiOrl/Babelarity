@@ -3,7 +3,6 @@ package it.uniroma1.lcl.babelarity;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -13,10 +12,10 @@ import java.util.stream.Stream;
  * RESPONSABILE DEL PARSING
  */
 
-// TODO: Iterable by the given documents
 
 public class CorpusManager implements Iterable<Document> {
-  private static Path stopWordPath = Paths.get("stopWords.txt");
+  //TODO: TROVARE UN POSTO PER LE STOPWORDS
+
   private static CorpusManager instance;
   private static HashSet<Document> parsedDocuments;
 
@@ -25,8 +24,7 @@ public class CorpusManager implements Iterable<Document> {
   private CorpusManager() {
 
     parsedDocuments = new HashSet<>();
-    this.parseStopWords();
-
+    CorpusManager.parseStopWords();
   }
 
 
@@ -38,7 +36,7 @@ public class CorpusManager implements Iterable<Document> {
 
 
   private static void parseStopWords() {
-    try (Stream<String> streamStopWords = Files.lines(stopWordPath)) {
+    try (Stream<String> streamStopWords = Files.lines(RelativePaths.STOPWORDS)) {
       stopWords = streamStopWords.collect(Collectors.toCollection(HashSet::new));
     } catch (IOException e) {
       e.printStackTrace();
@@ -71,7 +69,7 @@ public class CorpusManager implements Iterable<Document> {
    * @return Carica da disco l’oggetto it.uniroma1.lcl.babelarity.Document identificato dal suo ID.
    */
   public Document loadDocument(String id) {
-    try (FileInputStream streamFile = new FileInputStream("resources/documents/parsed/" + id + ".ser"); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
+    try (FileInputStream streamFile = new FileInputStream(RelativePaths.PARSED_DOCUMENTS.resolve(id + ".ser").toFile()); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
       return (Document) streamObj.readObject();
     } catch (Exception e) {
       System.out.println(e);
@@ -83,7 +81,7 @@ public class CorpusManager implements Iterable<Document> {
    * salva su disco l’oggetto it.uniroma1.lcl.babelarity.Document passato in input.
    */
   public void saveDocument(Document document) {
-    try (FileOutputStream streamFile = new FileOutputStream("resources/documents/parsed/" + document.getId() + ".ser");
+    try (FileOutputStream streamFile = new FileOutputStream(RelativePaths.PARSED_DOCUMENTS.resolve(document.getId() + ".ser").toFile());
          ObjectOutputStream oos = new ObjectOutputStream(streamFile)) {
       oos.writeObject(document);
     } catch (IOException e) {

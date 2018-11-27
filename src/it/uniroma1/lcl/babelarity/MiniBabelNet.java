@@ -2,21 +2,16 @@ package it.uniroma1.lcl.babelarity;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MiniBabelNet implements Iterable<Synset> {
 
-  private static String lemmatization = "resources/lemmatization-en.txt";
-  private static String dictionary = "resources/dictionary.txt";
-  private static String glosses = "resources/glosses.txt";
-  private static String relations = "resources/relations.txt";
-
   private StrategySimilarity lexicalSimilarityStrategy;
   private StrategySimilarity semanticSimilarityStrategy;
   private StrategySimilarity documentSimilarityStrategy;
+
   private static MiniBabelNet instance;
   private static HashMap<String, String> fromInflectedToLemma = new HashMap<>();
   private static HashSet<String> lemmas = new HashSet<>();
@@ -26,10 +21,10 @@ public class MiniBabelNet implements Iterable<Synset> {
   public int synsetSize;
 
   private MiniBabelNet() {
-    try (Stream<String> streamLemmatization = Files.lines(Paths.get(lemmatization));
-         Stream<String> streamDictionary = Files.lines(Paths.get(dictionary));
-         Stream<String> streamGlosses = Files.lines(Paths.get(glosses));
-         Stream<String> streamRelations = Files.lines(Paths.get(relations))) {
+    try (Stream<String> streamLemmatization = Files.lines(RelativePaths.LEMMATIZATIONS);
+         Stream<String> streamDictionary = Files.lines(RelativePaths.DICTIONARY);
+         Stream<String> streamGlosses = Files.lines(RelativePaths.GLOSSES);
+         Stream<String> streamRelations = Files.lines(RelativePaths.RELATIONS)) {
       streamLemmatization
               .map(line -> line.split("\t"))
               .forEach(line -> {
