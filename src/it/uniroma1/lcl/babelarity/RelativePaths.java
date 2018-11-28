@@ -18,5 +18,4 @@ public interface RelativePaths {
   Path RELATIONS = RESOURCES.resolve("relations.txt");
   Path GLOSSES = RESOURCES.resolve("glosses.txt");
 
-
 }

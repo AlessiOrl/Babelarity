@@ -1,5 +1,7 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
+
 import java.util.*;
 
 public class Synset implements LinguisticObject {
@@ -11,12 +13,11 @@ public class Synset implements LinguisticObject {
   private HashSet<Synset> isaOpposite;
   private HashMap<String, ArrayList<Synset>> relations;
 
-  public Synset(String id, HashSet<String> lemmas) {
+  public Synset(String id, HashSet<String> lemmas) throws NoSuchPosException {
     this.relations = new HashMap<>();
     this.isaOpposite = new HashSet<>();
     this.id = id;
     this.lemmas = lemmas;
-    //TODO: create a case else with an exception
     switch (id.charAt(id.length() - 1)) {
       case 'n':
         pos = Pos.NOUN;
@@ -30,10 +31,12 @@ public class Synset implements LinguisticObject {
       case 'r':
         pos = Pos.ADV;
         break;
+      default:
+        throw new NoSuchPosException("No such POS in the WordNet");
     }
   }
 
-  public Synset(String id, HashSet<String> lemmas, HashSet<String> glosses) {
+  public Synset(String id, HashSet<String> lemmas, HashSet<String> glosses) throws NoSuchPosException {
     this(id, lemmas);
     this.glosses = glosses;
 

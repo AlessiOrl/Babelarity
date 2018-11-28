@@ -1,5 +1,9 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.exceptions.DifferentLinguisticObjectException;
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchLinguisticObjectException;
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -35,7 +39,13 @@ public class MiniBabelNet implements Iterable<Synset> {
       streamDictionary
               .map(line -> line.split("\t", 2))
               .filter(line -> line[0].startsWith("bn"))
-              .forEach(line -> synsetsMap.put(line[0], new Synset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t"))))));
+              .forEach(line -> {
+                try {
+                  synsetsMap.put(line[0], new Synset(line[0], new HashSet<>(Arrays.asList(line[1].split("\t")))));
+                } catch (NoSuchPosException e) {
+                  throw new RuntimeException(e);
+                }
+              });
 
       streamGlosses
               .map(line -> line.split("\t", 2))
@@ -49,8 +59,9 @@ public class MiniBabelNet implements Iterable<Synset> {
       synsets = List.copyOf(synsetsMap.values());
       synsetSize = synsets.size();
 
-    } catch (IOException e) {
+    } catch (IOException | RuntimeException e) {
       e.printStackTrace();
+
     }
   }
 
@@ -133,26 +144,30 @@ public class MiniBabelNet implements Iterable<Synset> {
    * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
    */
   public double computeSimilarity(LinguisticObject o1, LinguisticObject o2) {
-    //TODO: CREATE A CASE SWITCH with an exception
-    if (o1.getClass() != o2.getClass()) {
-    } //throw exception different type
-    if (o1 instanceof Word) {
-      if (lexicalSimilarityStrategy == null)
-        lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
-      return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
-    }
-    if (o1 instanceof Synset) {
-      if (semanticSimilarityStrategy == null)
-        semanticSimilarityStrategy = BabelSemanticSimilarity.getInstance();
-      return semanticSimilarityStrategy.computeSimilarity(o1, o2);
-    }
-    if (o1 instanceof Document) {
-      if (documentSimilarityStrategy == null)
-        documentSimilarityStrategy = BabelDocumentSimilarity.getInstance();
-      return documentSimilarityStrategy.computeSimilarity(o1, o2);
-    }
-    return 0.0;
+    try {
+      if (o1.getClass() != o2.getClass())
+        throw new DifferentLinguisticObjectException("The two Linguistic Object have different type");
 
+      if (o1 instanceof Word) {
+        if (lexicalSimilarityStrategy == null)
+          lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
+        return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
+      }
+      if (o1 instanceof Synset) {
+        if (semanticSimilarityStrategy == null)
+          semanticSimilarityStrategy = BabelSemanticSimilarity.getInstance();
+        return semanticSimilarityStrategy.computeSimilarity(o1, o2);
+      }
+      if (o1 instanceof Document) {
+        if (documentSimilarityStrategy == null)
+          documentSimilarityStrategy = BabelDocumentSimilarity.getInstance();
+        return documentSimilarityStrategy.computeSimilarity(o1, o2);
+      }
+      throw new NoSuchLinguisticObjectException("No such similarity use those linguisticObjects");
+    } catch (DifferentLinguisticObjectException | NoSuchLinguisticObjectException e) {
+      e.printStackTrace();
+    }
+    return -1;
   }
 
   /**

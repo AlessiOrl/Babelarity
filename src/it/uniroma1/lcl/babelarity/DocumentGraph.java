@@ -25,8 +25,10 @@ public class DocumentGraph {
                                .collect(Collectors.toSet());
 
     for (Synset s : lemmas) {
-      //aggiunge un nodo e lo relazione a tutti i vicini (fino a 2 unità di distanza)
-      docGraph.putIfAbsent(s, this.getNeighbors(s, lemmas));
+      if (docGraph.containsKey(s)) continue;
+      Set<Synset> neighbors = this.getNeighbors(s, lemmas);
+      if (neighbors.size() == 0) continue;
+      docGraph.put(s, neighbors);
     }
     return docGraph;
   }
@@ -37,7 +39,7 @@ public class DocumentGraph {
 
     for (Entry<String, ArrayList<Synset>> e : nodeSynset.getRelations().entrySet())
       nearNeighbors.addAll(e.getValue());
-
+    
     for (Synset node : nearNeighbors) {
       neighbors.add(node);
       for (Entry<String, ArrayList<Synset>> e : node.getRelations().entrySet())
