@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 
 public class CorpusManager implements Iterable<Document> {
-  //TODO: TROVARE UN POSTO PER LE STOPWORDS
 
   private static CorpusManager instance;
   private static HashSet<Document> parsedDocuments;
