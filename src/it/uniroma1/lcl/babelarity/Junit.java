@@ -109,15 +109,6 @@ class BabelarityTest {
   }
 
 
-  @Test
-  public void myTest() {
-    System.out.println(" SIMILARITY 1 : ");
-    testDocumentSimilarity1();
-    System.out.println(" \nSIMILARITY 2 : ");
-    testDocumentSimilarity2();
-    System.out.println(" \nSIMILARITY 3 : ");
-    testDocumentSimilarity3();
-  }
 
   @Test
   public void testDocumentSimilarity1() {
