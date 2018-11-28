@@ -1,4 +1,8 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.strategy;
+
+import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.MiniBabelNet;
+import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,21 +10,21 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
-public class BabelSemanticSimilarity implements SemanticSimilarityStrategy {
+public class BabelSemanticSimilarityStrategy implements SemanticSimilarityStrategy {
 
   //TODO: PROVARE AD IMPLEMENTARE LA SIMILARITA' AVANZATA
-  private static BabelSemanticSimilarity instance;
+  private static BabelSemanticSimilarityStrategy instance;
   private int maxDepth;
   private HashSet<Synset> roots;
 
 
-  private BabelSemanticSimilarity() {
+  private BabelSemanticSimilarityStrategy() {
     roots = new HashSet<>();
   }
 
-  public static BabelSemanticSimilarity getInstance() {
+  public static BabelSemanticSimilarityStrategy getInstance() {
     if (instance == null)
-      instance = new BabelSemanticSimilarity();
+      instance = new BabelSemanticSimilarityStrategy();
     return instance;
   }
 

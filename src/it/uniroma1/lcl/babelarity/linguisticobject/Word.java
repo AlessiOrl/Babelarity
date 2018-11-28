@@ -1,4 +1,6 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.linguisticobject;
+
+import it.uniroma1.lcl.babelarity.MiniBabelNet;
 
 import java.util.Objects;
 

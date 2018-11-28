@@ -1,5 +1,9 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.linguisticobject.Document;
+import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+import it.uniroma1.lcl.babelarity.linguisticobject.Word;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -49,12 +53,12 @@ class BabelarityTest {
     assertEquals(relations[2], "bn:00000239n_has-kind");
   }
 
-
   @Test
   public void testDocumentManager() {
     Document document = documentManager.parseDocument(DOCUMENTS.resolve("Cultural_tourism.txt"));
     assertEquals(document.getTitle(), "Cultural tourism");
-    assertEquals(document.getContent().substring(0, 107), "Cultural tourism (or culture tourism) is the subset of tourism concerned with a country or region's culture");
+    assertEquals(document.getContent().substring(0, 107),
+            "Cultural tourism (or culture tourism) is the subset of tourism concerned with a country or region's culture");
     Document document1 = documentManager.parseDocument(DOCUMENTS.resolve("programming_language.txt"));
     assertTrue(!document.getId().equals(document1.getId()));
     documentManager.saveDocument(document);
@@ -108,8 +112,6 @@ class BabelarityTest {
     similarityTest(s1, s2, s3, s4);
   }
 
-
-
   @Test
   public void testDocumentSimilarity1() {
     Document d1 = documentManager.parseDocument(DOCUMENTS.resolve("C_programming_language.txt"));
@@ -143,19 +145,11 @@ class BabelarityTest {
   }
 
   public void similarityTest(LinguisticObject o1, LinguisticObject o2, LinguisticObject o3, LinguisticObject o4) {
-    System.out.println("start similarity");
     double sim1 = miniBabelNet.computeSimilarity(o1, o2);
-    System.out.println("done 1 " + sim1);
     double sim2 = miniBabelNet.computeSimilarity(o3, o4);
-    System.out.println("done 2 " + sim2);
     double sim3 = miniBabelNet.computeSimilarity(o1, o3);
-    System.out.println("done 3  " + sim3);
     double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-    System.out.println("done 4  " + sim4);
-
     assertTrue(sim1 > sim3 && sim2 > sim4);
   }
 
 }
-
-

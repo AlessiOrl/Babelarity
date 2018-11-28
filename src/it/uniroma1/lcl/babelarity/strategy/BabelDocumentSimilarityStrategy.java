@@ -1,21 +1,28 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.strategy;
+
+import it.uniroma1.lcl.babelarity.linguisticobject.Document;
+import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+import it.uniroma1.lcl.babelarity.linguisticobject.VectorizedLinguisticObj;
+import it.uniroma1.lcl.babelarity.DocumentGraph;
+import it.uniroma1.lcl.babelarity.MiniBabelNet;
 
 import java.util.Arrays;
 import java.util.Random;
 
-public class BabelDocumentSimilarity implements DocumentSimilarityStrategy {
+public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrategy {
 
-  private static BabelDocumentSimilarity instance;
+  private static BabelDocumentSimilarityStrategy instance;
   private VectorizedLinguisticObj<Document, Integer> vectorizedDocuments;
   private final int RESTART = 25;
   private final int ITERATIONS = 5000;
 
-  private BabelDocumentSimilarity() {
+  private BabelDocumentSimilarityStrategy() {
     vectorizedDocuments = new VectorizedLinguisticObj<>();
   }
 
-  public static BabelDocumentSimilarity getInstance() {
-    if (instance == null) instance = new BabelDocumentSimilarity();
+  public static BabelDocumentSimilarityStrategy getInstance() {
+    if (instance == null) instance = new BabelDocumentSimilarityStrategy();
     return instance;
   }
 

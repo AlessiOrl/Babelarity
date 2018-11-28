@@ -1,8 +1,17 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.linguisticobject;
 
 import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 
 import java.util.*;
+
+/**
+ * The class that define a typology of a @LinguisticObject.
+ * A Synset (synonym set) is a set of words with the same {@link Pos POS} that can be used and substituted in a certain context. TODO: ??
+ * The Synsets are made up by an ID, a {@link Pos POS}, some lemmas, glosses and relations.
+ * The lemma is the base form of the words  -> ex. the lemma of the word prettier is pretty
+ * A gloss is the meaning of the word, every word can have multiple meaning
+ * The relations of a Synset are the arc of the graph, those arcs are used to create the wordnet called {@link it.uniroma1.lcl.babelarity.MiniBabelNet MiniBabelNet}
+ */
 
 public class Synset implements LinguisticObject {
 
@@ -13,6 +22,12 @@ public class Synset implements LinguisticObject {
   private HashSet<Synset> isaOpposite;
   private HashMap<String, ArrayList<Synset>> relations;
 
+  /**
+   * The constructor of the class;
+   * @param id the id of the Synset
+   * @param lemmas the lemmas of the synset
+   * @throws NoSuchPosException in case of a POS not present in the standard graph
+   */
   public Synset(String id, HashSet<String> lemmas) throws NoSuchPosException {
     this.relations = new HashMap<>();
     this.isaOpposite = new HashSet<>();
@@ -42,19 +57,22 @@ public class Synset implements LinguisticObject {
 
   }
 
+
   public void setGlosses(HashSet<String> glosses) {
     if (this.glosses == null)
       this.glosses = glosses;
   }
 
   /**
-   * restituisce l’id univoco del synset sotto forma di stringa. Gli identificativi dei synset seguono il formato bn:00000000n, dove l’ultimo carattere rappresenta la parte del discorso del concetto n(oun), v(erb), a(djective), (adve)r(b).
+   * Return the String of the unique ID of the Synset.
+   * The form of the ID is "bn:00000000n" where the last char rapresent the Part-of-speech of the synset : n(oun), v(erb), a(djective), (adve)r(b).
    */
   public String getID() {
     return id;
   }
 
   /**
+   * Return the part-of-speech of the Synset.  TODO: ??
    * estituisce la parte del discorso (Part-of-Speech) del synset (calcolabile a partire dall’ID del synset) scelta tra NOUN, ADV, ADJ, VERB.
    */
   public Pos getPOS() {

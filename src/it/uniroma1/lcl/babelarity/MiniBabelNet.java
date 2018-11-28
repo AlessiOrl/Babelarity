@@ -1,5 +1,10 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.linguisticobject.Document;
+import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+import it.uniroma1.lcl.babelarity.linguisticobject.Word;
+import it.uniroma1.lcl.babelarity.strategy.*;
 import it.uniroma1.lcl.babelarity.exceptions.DifferentLinguisticObjectException;
 import it.uniroma1.lcl.babelarity.exceptions.NoSuchLinguisticObjectException;
 import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
@@ -12,9 +17,9 @@ import java.util.stream.Stream;
 
 public class MiniBabelNet implements Iterable<Synset> {
 
-  private StrategySimilarity lexicalSimilarityStrategy;
-  private StrategySimilarity semanticSimilarityStrategy;
-  private StrategySimilarity documentSimilarityStrategy;
+  private SimilarityStrategy lexicalSimilarityStrategy;
+  private SimilarityStrategy semanticSimilarityStrategy;
+  private SimilarityStrategy documentSimilarityStrategy;
 
   private static MiniBabelNet instance;
   private static HashMap<String, String> fromInflectedToLemma = new HashMap<>();
@@ -65,7 +70,7 @@ public class MiniBabelNet implements Iterable<Synset> {
     }
   }
 
-  static MiniBabelNet getInstance() {
+  public static MiniBabelNet getInstance() {
     if (instance == null)
       instance = new MiniBabelNet();
     return instance;
@@ -107,7 +112,7 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.Synset fornito in input sotto forma di stringa. Il formato della stringa è il seguente: ID\tPOS\tLEMMI\tGLOSSE\tRELAZIONI Le componenti LEMMI, GLOSSE e RELAZIONI possono contenere più elementi, questi sono separati dal carattere ";" Le relazioni devono essere condificate nel seguente formato: TARGETSYNSET_RELNAME   es.
+   * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.linguisticobject.Synset fornito in input sotto forma di stringa. Il formato della stringa è il seguente: ID\tPOS\tLEMMI\tGLOSSE\tRELAZIONI Le componenti LEMMI, GLOSSE e RELAZIONI possono contenere più elementi, questi sono separati dal carattere ";" Le relazioni devono essere condificate nel seguente formato: TARGETSYNSET_RELNAME   es.
    * bn:00081546n_has-kind
    * <p>
    * es: bn:00047028n	NOUN	word;intelligence;news;tidings	Information about recent and important events	bn:0000001n_has-kind;bn:0000001n_is-a
@@ -141,7 +146,7 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.Synset, Documenti o parole)
+   * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.linguisticobject.Synset, Documenti o parole)
    */
   public double computeSimilarity(LinguisticObject o1, LinguisticObject o2) {
     try {
@@ -150,17 +155,17 @@ public class MiniBabelNet implements Iterable<Synset> {
 
       if (o1 instanceof Word) {
         if (lexicalSimilarityStrategy == null)
-          lexicalSimilarityStrategy = BabelLexicalSimilarity.getInstance();
+          lexicalSimilarityStrategy = BabelLexicalSimilarityStrategy.getInstance();
         return lexicalSimilarityStrategy.computeSimilarity(o1, o2);
       }
       if (o1 instanceof Synset) {
         if (semanticSimilarityStrategy == null)
-          semanticSimilarityStrategy = BabelSemanticSimilarity.getInstance();
+          semanticSimilarityStrategy = BabelSemanticSimilarityStrategy.getInstance();
         return semanticSimilarityStrategy.computeSimilarity(o1, o2);
       }
       if (o1 instanceof Document) {
         if (documentSimilarityStrategy == null)
-          documentSimilarityStrategy = BabelDocumentSimilarity.getInstance();
+          documentSimilarityStrategy = BabelDocumentSimilarityStrategy.getInstance();
         return documentSimilarityStrategy.computeSimilarity(o1, o2);
       }
       throw new NoSuchLinguisticObjectException("No such similarity use those linguisticObjects");

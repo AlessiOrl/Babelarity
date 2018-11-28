@@ -1,4 +1,4 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.linguisticobject;
 
 import java.util.HashMap;
 import java.util.LinkedList;

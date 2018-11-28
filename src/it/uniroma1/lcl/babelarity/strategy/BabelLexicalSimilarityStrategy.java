@@ -1,4 +1,11 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.strategy;
+
+import it.uniroma1.lcl.babelarity.*;
+import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.linguisticobject.VectorizedLinguisticObj;
+import it.uniroma1.lcl.babelarity.linguisticobject.Word;
+import it.uniroma1.lcl.babelarity.CorpusManager;
+import it.uniroma1.lcl.babelarity.MiniBabelNet;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,17 +15,17 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class BabelLexicalSimilarity implements LexicalSimilarityStrategy {
+public class BabelLexicalSimilarityStrategy implements LexicalSimilarityStrategy {
 
   //TODO: PROVARE A CONTARE LE OCCORRENZE SOLO UNA VOLTA PER DOCUMENTO
-  private static BabelLexicalSimilarity instance;
+  private static BabelLexicalSimilarityStrategy instance;
   private List<File> corpusFiles;
   private HashMap<String, HashSet<Integer>> documentByWords;
   private Map<String, Integer> wordsIndexing;
   private HashMap<String, Integer> wordsCounter;
   private VectorizedLinguisticObj<Word, Float> vectorizedWords;
 
-  private BabelLexicalSimilarity() {
+  private BabelLexicalSimilarityStrategy() {
     corpusFiles = List.of(Objects.requireNonNull(RelativePaths.CORPUS.toFile().listFiles()));
     wordsCounter = new HashMap<>();
     wordsIndexing = new HashMap<>();
@@ -27,9 +34,9 @@ public class BabelLexicalSimilarity implements LexicalSimilarityStrategy {
     this.parseCorpus();
   }
 
-  public static BabelLexicalSimilarity getInstance() {
+  public static BabelLexicalSimilarityStrategy getInstance() {
     if (instance == null)
-      instance = new BabelLexicalSimilarity();
+      instance = new BabelLexicalSimilarityStrategy();
     return instance;
   }
 

@@ -1,5 +1,8 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.linguisticobject.Document;
+import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -39,7 +42,7 @@ public class DocumentGraph {
 
     for (Entry<String, ArrayList<Synset>> e : nodeSynset.getRelations().entrySet())
       nearNeighbors.addAll(e.getValue());
-    
+
     for (Synset node : nearNeighbors) {
       neighbors.add(node);
       for (Entry<String, ArrayList<Synset>> e : node.getRelations().entrySet())

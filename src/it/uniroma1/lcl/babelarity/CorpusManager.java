@@ -1,5 +1,7 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.linguisticobject.Document;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +49,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * @return una nuova istanza di it.uniroma1.lcl.babelarity.Document parsando un file di testo di cui è fornito il percorso in input.
+   * @return una nuova istanza di it.uniroma1.lcl.babelarity.linguisticobject.Document parsando un file di testo di cui è fornito il percorso in input.
    */
   public Document parseDocument(Path path) {
     try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -65,7 +67,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * @return Carica da disco l’oggetto it.uniroma1.lcl.babelarity.Document identificato dal suo ID.
+   * @return Carica da disco l’oggetto it.uniroma1.lcl.babelarity.linguisticobject.Document identificato dal suo ID.
    */
   public Document loadDocument(String id) {
     try (FileInputStream streamFile = new FileInputStream(RelativePaths.PARSED_DOCUMENTS.resolve(id + ".ser").toFile()); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
@@ -77,7 +79,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * salva su disco l’oggetto it.uniroma1.lcl.babelarity.Document passato in input.
+   * salva su disco l’oggetto it.uniroma1.lcl.babelarity.linguisticobject.Document passato in input.
    */
   public void saveDocument(Document document) {
     try (FileOutputStream streamFile = new FileOutputStream(RelativePaths.PARSED_DOCUMENTS.resolve(document.getId() + ".ser").toFile());

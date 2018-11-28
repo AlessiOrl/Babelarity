@@ -1,15 +1,28 @@
-package it.uniroma1.lcl.babelarity;
+package it.uniroma1.lcl.babelarity.linguisticobject;
+
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Objects;
 
+/**
+ * This class define a typology of @LinguisticObject.
+ * A Document is made up by an ID a title and a content.
+ */
 public class Document implements LinguisticObject, Serializable {
 
   private String id;
   private String title;
   private String content;
 
+  /**
+   * The constructor of the class.
+   * @param title : the title of the Document
+   * @param id : the ID of the Docuemnt
+   * @param content : the content of the Document
+   * @param path : the Path where the Document file is located
+   */
   public Document(String title, String id, String content, Path path) {
     this.id = id;
     this.title = title;
@@ -17,22 +30,23 @@ public class Document implements LinguisticObject, Serializable {
   }
 
   /**
-   * @return restituisce l' id del documento
+   * @return the ID of the Document
    */
 
   public String getId() {
     return id;
+
   }
 
   /**
-   * @return il titolo del documuento
+   * @return the title of the Document
    */
   public String getTitle() {
     return title;
   }
 
   /**
-   * @return il contenuto del documento sotto forma di stringa
+   * @return the content of the Document in a String form
    */
   public String getContent() {
     return content;
