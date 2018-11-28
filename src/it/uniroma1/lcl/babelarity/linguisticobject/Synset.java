@@ -72,8 +72,7 @@ public class Synset implements LinguisticObject {
   }
 
   /**
-   * Return the part-of-speech of the Synset.  TODO: ??
-   * estituisce la parte del discorso (Part-of-Speech) del synset (calcolabile a partire dall’ID del synset) scelta tra NOUN, ADV, ADJ, VERB.
+   * Return the part-of-speech of the Synset taken from the Synset's ID
    */
   public Pos getPOS() {
     return pos;
