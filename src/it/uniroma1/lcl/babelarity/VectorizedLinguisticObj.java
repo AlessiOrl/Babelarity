@@ -1,4 +1,4 @@
-package it.uniroma1.lcl.babelarity.linguisticobject;
+package it.uniroma1.lcl.babelarity;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,4 +25,5 @@ public class VectorizedLinguisticObj<R, T extends Number> extends HashMap<R, T[]
     queue.add(obj);
     return super.put(obj, vector);
   }
+
 }

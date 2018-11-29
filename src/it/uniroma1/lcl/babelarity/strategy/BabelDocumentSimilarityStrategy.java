@@ -3,7 +3,7 @@ package it.uniroma1.lcl.babelarity.strategy;
 import it.uniroma1.lcl.babelarity.linguisticobject.Document;
 import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
 import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
-import it.uniroma1.lcl.babelarity.linguisticobject.VectorizedLinguisticObj;
+import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
 import it.uniroma1.lcl.babelarity.DocumentGraph;
 import it.uniroma1.lcl.babelarity.MiniBabelNet;
 
@@ -35,8 +35,10 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
     double denominatore1 = 0;
     double denominatore2 = 0;
 
-    if (!vectorizedDocuments.containsKey(d)) vectorizedDocuments.put(d, generateRanks(d));
-    if (!vectorizedDocuments.containsKey(d2)) vectorizedDocuments.put(d2, generateRanks(d2));
+    //if (!vectorizedDocuments.containsKey(d)) vectorizedDocuments.put(d, generateRanks(d));
+    //if (!vectorizedDocuments.containsKey(d2)) vectorizedDocuments.put(d2, generateRanks(d2));
+    vectorizedDocuments.put(d, generateRanks(d));
+    vectorizedDocuments.put(d2, generateRanks(d2));
 
     for (int x = 0; x < vectorizedDocuments.get(d).length; x++) {
       numeratore += vectorizedDocuments.get(d)[x] * vectorizedDocuments.get(d2)[x];
@@ -47,12 +49,16 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
   }
 
   private Integer[] generateRanks(Document d) {
+    long t1 = System.currentTimeMillis();
     DocumentGraph docGraph = new DocumentGraph(d);
+    System.out.println("Time graph : " + (System.currentTimeMillis() - t1));
+
     Integer[] vector = new Integer[MiniBabelNet.getInstance().synsetSize];
     Arrays.fill(vector, 0);
     Random rand = new Random();
     int k = ITERATIONS;
 
+    t1 = System.currentTimeMillis();
     int index = rand.nextInt(docGraph.getNodes().length);
     Synset node = docGraph.getNodes()[index];
     while (k-- > 0) {
@@ -68,6 +74,7 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
         node = neighbor[index];
       }
     }
+    System.out.println("Time random Walk : " + (System.currentTimeMillis() - t1));
     return vector;
   }
 }

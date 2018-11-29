@@ -2,7 +2,7 @@ package it.uniroma1.lcl.babelarity.strategy;
 
 import it.uniroma1.lcl.babelarity.*;
 import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.VectorizedLinguisticObj;
+import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
 import it.uniroma1.lcl.babelarity.linguisticobject.Word;
 import it.uniroma1.lcl.babelarity.CorpusManager;
 import it.uniroma1.lcl.babelarity.MiniBabelNet;

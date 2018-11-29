@@ -35,6 +35,20 @@ class BabelarityTest {
   }
 
   @Test
+  public void myTest(){
+      long total = 0;
+      for (int x = 0; x < 1 ; x++) {
+          long t1 = System.currentTimeMillis();
+          testDocumentSimilarity1();
+          long t2 = (System.currentTimeMillis() - t1) /1000;
+          System.out.println(t2);
+          total += t2;
+      }
+      System.out.println("--------------------------");
+      System.out.println(total / 10);
+
+  }
+  @Test
   public void testMiniBabelNet() {
     Synset synset = miniBabelNet.getSynset("bn:00081546n");
     String summary = miniBabelNet.getSynsetSummary(synset);
