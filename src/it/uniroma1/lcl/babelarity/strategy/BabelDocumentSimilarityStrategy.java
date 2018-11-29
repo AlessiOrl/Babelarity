@@ -51,7 +51,7 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
   private Integer[] generateRanks(Document d) {
     long t1 = System.currentTimeMillis();
     DocumentGraph docGraph = new DocumentGraph(d);
-    System.out.println("Time garaph : " + (System.currentTimeMillis() - t1));
+    System.out.println("Time graph : " + (System.currentTimeMillis() - t1));
 
     Integer[] vector = new Integer[MiniBabelNet.getInstance().synsetSize];
     Arrays.fill(vector, 0);
