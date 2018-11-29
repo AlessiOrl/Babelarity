@@ -44,8 +44,7 @@ public class DocumentGraph {
 
         for (Synset node : nearNeighbors) {
             neighbors.add(node);
-            for (Entry<String, ArrayList<Synset>> e : node.getRelations().entrySet())
-                neighbors.addAll(e.getValue());
+            neighbors.addAll(node.getRelations().entrySet().parallelStream().map(Entry::getValue).flatMap(Collection::parallelStream).collect(Collectors.toSet()));
         }
 
         return neighbors.parallelStream()
