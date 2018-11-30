@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * This class define a typology of @LinguisticObject.
+ * This class define a typology of {@link LinguisticObject LinguisticObject}.
  * A Document is made up by an ID a title and a content.
  */
 public class Document implements LinguisticObject, Serializable {

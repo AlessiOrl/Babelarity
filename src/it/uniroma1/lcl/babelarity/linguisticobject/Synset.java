@@ -5,7 +5,7 @@ import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 import java.util.*;
 
 /**
- * The class that define a typology of a @LinguisticObject.
+ * The class that define a typology of a {@link LinguisticObject LinguisticObject}.
  * A Synset (synonym set) is a set of words with the same {@link Pos POS} that can be used and substituted in a certain context. TODO: ??
  * The Synsets are made up by an ID, a {@link Pos POS}, some lemmas, glosses and relations.
  * The lemma is the base form of the words  -> ex. the lemma of the word prettier is pretty
@@ -24,7 +24,8 @@ public class Synset implements LinguisticObject {
 
   /**
    * The constructor of the class;
-   * @param id the id of the Synset
+   *
+   * @param id     the id of the Synset
    * @param lemmas the lemmas of the synset
    * @throws NoSuchPosException in case of a POS not present in the standard graph
    */
@@ -79,21 +80,21 @@ public class Synset implements LinguisticObject {
   }
 
   /**
-   * restituisce l’insieme delle lessicalizzazioni di cui è il synset
+   * Return the Synset's lemmas
    */
   public HashSet<String> getLemmas() {
     return lemmas;
   }
 
   /**
-   * restituisce le definizioni del synset
+   * Return the Synset's glosses
    */
   public HashSet<String> getGlosses() {
     return glosses;
   }
 
   /**
-   * aggiunge una relazione all'elenco di relazioni del synset
+   * Add a relations in the Synset relations.
    *
    * @param type   il tipo di relazione
    * @param synset il synset di destinazione
@@ -107,23 +108,35 @@ public class Synset implements LinguisticObject {
       synset.addisaOpposite(this);
   }
 
-  /**
-   * aggiunge alla lista dei figli
-   */
-  public void addisaOpposite(Synset son) {
+  private void addisaOpposite(Synset son) {
     this.isaOpposite.add(son);
   }
 
+  /**
+   * Return the Synset's opposite relations of "is-a".
+   */
   public HashSet<Synset> getIsaOpposite() {
     return isaOpposite;
   }
 
+  /**
+   * @param type the type of the relation to return.
+   * @return the specific Synset's relations.
+   */
   public ArrayList<Synset> getRelationByType(String type) {
     return relations.get(type);
   }
 
+  /**
+   * @return the map of all the relations of the Synset.
+   */
   public HashMap<String, ArrayList<Synset>> getRelations() {
     return relations;
+  }
+
+  @Override
+  public String toString() {
+    return id + " || " + lemmas.toString() + " || " + glosses.toString();
   }
 
   @Override
@@ -144,9 +157,5 @@ public class Synset implements LinguisticObject {
     return ((Synset) obj).id.equals(this.id);
   }
 
-  @Override
-  public String toString() {
-    return id + " || " + lemmas.toString() + " || " + glosses.toString();
-  }
 
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * RESPONSABILE DEL PARSING
+ * This class parse the Documents given.
  */
 
 
@@ -23,7 +23,6 @@ public class CorpusManager implements Iterable<Document> {
   private static HashSet<String> stopWords;
 
   private CorpusManager() {
-
     parsedDocuments = new HashSet<>();
     CorpusManager.parseStopWords();
   }
@@ -35,7 +34,9 @@ public class CorpusManager implements Iterable<Document> {
     return instance;
   }
 
-
+  /**
+   * This method parse the StopWords file
+   */
   private static void parseStopWords() {
     try (Stream<String> streamStopWords = Files.lines(RelativePaths.STOPWORDS)) {
       stopWords = streamStopWords.collect(Collectors.toCollection(HashSet::new));
@@ -44,12 +45,16 @@ public class CorpusManager implements Iterable<Document> {
     }
   }
 
+  /**
+   *
+   * @return The set of StopWords parsed.
+   */
   public static HashSet<String> getStopWords() {
     return stopWords;
   }
 
   /**
-   * @return una nuova istanza di it.uniroma1.lcl.babelarity.linguisticobject.Document parsando un file di testo di cui è fornito il percorso in input.
+   * @return a new instance of {@link Document Document} parsing a text file taken via the given path.
    */
   public Document parseDocument(Path path) {
     try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -67,7 +72,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * @return Carica da disco l’oggetto it.uniroma1.lcl.babelarity.linguisticobject.Document identificato dal suo ID.
+   * @return Load from the disk l'object {@link Document Document} identified by ID.
    */
   public Document loadDocument(String id) {
     try (FileInputStream streamFile = new FileInputStream(RelativePaths.PARSED_DOCUMENTS.resolve(id + ".ser").toFile()); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
@@ -79,7 +84,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * salva su disco l’oggetto it.uniroma1.lcl.babelarity.linguisticobject.Document passato in input.
+   * Save on disk l'object {@link Document Document} given in the input.
    */
   public void saveDocument(Document document) {
     try (FileOutputStream streamFile = new FileOutputStream(RelativePaths.PARSED_DOCUMENTS.resolve(document.getId() + ".ser").toFile());

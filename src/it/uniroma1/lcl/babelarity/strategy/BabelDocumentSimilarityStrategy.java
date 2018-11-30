@@ -1,11 +1,11 @@
 package it.uniroma1.lcl.babelarity.strategy;
 
+import it.uniroma1.lcl.babelarity.DocumentGraph;
+import it.uniroma1.lcl.babelarity.MiniBabelNet;
+import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
 import it.uniroma1.lcl.babelarity.linguisticobject.Document;
 import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
 import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
-import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
-import it.uniroma1.lcl.babelarity.DocumentGraph;
-import it.uniroma1.lcl.babelarity.MiniBabelNet;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -17,28 +17,70 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
   private final int RESTART = 25;
   private final int ITERATIONS = 5000;
 
+
+  public static BabelDocumentSimilarityStrategy getInstance() {
+    if (instance == null)
+      instance = new BabelDocumentSimilarityStrategy();
+    return instance;
+  }
+
   private BabelDocumentSimilarityStrategy() {
     vectorizedDocuments = new VectorizedLinguisticObj<>();
   }
 
-  public static BabelDocumentSimilarityStrategy getInstance() {
-    if (instance == null) instance = new BabelDocumentSimilarityStrategy();
-    return instance;
+  /**
+   * Generate the vector of the given {@link Document Document}.
+   * The rank is generated using the graph of the Document (created using the {@link DocumentGraph DocumentGraph} class and using the Random Walk algorithm.
+   *
+   */
+  private Integer[] generateRanks(Document d) {
+    DocumentGraph docGraph = new DocumentGraph(d);
+
+    Integer[] vector = new Integer[MiniBabelNet.getInstance().synsetSize];
+    Arrays.fill(vector, 0);
+    Random rand = new Random();
+    int k = ITERATIONS;
+
+    int index = rand.nextInt(docGraph.getNodes().length);
+    Synset node = docGraph.getNodes()[index];
+
+    while (k-- > 0) {
+
+      vector[MiniBabelNet.getAllSynsets().indexOf(node)]++;
+      int randInt = rand.nextInt(100);
+      if (randInt > RESTART) {
+        index = rand.nextInt(docGraph.getNodes().length);
+        node = docGraph.getNodes()[index];
+      } else {
+        Synset[] neighbor = docGraph.getNeighbors(node);
+        index = neighbor.length == 0 ? rand.nextInt(docGraph.getNodes().length) : rand.nextInt(neighbor.length);
+        node = neighbor.length > 0 ? neighbor[index] : docGraph.getNodes()[index];
+      }
+    }
+
+    return vector;
   }
 
+  /**
+   * This method compute the Similarity between two Documents, basicalli use the Cosine Similarity method with the two Document's vector.
+   * @param o the first Document
+   * @param o2 the second Document
+   * @return the value of the Similarity between the two Documents
+   */
   @Override
   public double computeSimilarity(LinguisticObject o, LinguisticObject o2) {
     Document d = ((Document) o);
     Document d2 = ((Document) o2);
-    if (d.equals(d2)) return 1;
+    if (d.equals(d2))
+      return 1;
     double numeratore = 0;
     double denominatore1 = 0;
     double denominatore2 = 0;
 
-    //if (!vectorizedDocuments.containsKey(d)) vectorizedDocuments.put(d, generateRanks(d));
-    //if (!vectorizedDocuments.containsKey(d2)) vectorizedDocuments.put(d2, generateRanks(d2));
-    vectorizedDocuments.put(d, generateRanks(d));
-    vectorizedDocuments.put(d2, generateRanks(d2));
+    if (!vectorizedDocuments.containsKey(d))
+      vectorizedDocuments.put(d, generateRanks(d));
+    if (!vectorizedDocuments.containsKey(d2))
+      vectorizedDocuments.put(d2, generateRanks(d2));
 
     for (int x = 0; x < vectorizedDocuments.get(d).length; x++) {
       numeratore += vectorizedDocuments.get(d)[x] * vectorizedDocuments.get(d2)[x];
@@ -48,33 +90,4 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
     return numeratore / (Math.sqrt(denominatore1) * Math.sqrt(denominatore2));
   }
 
-  private Integer[] generateRanks(Document d) {
-    long t1 = System.currentTimeMillis();
-    DocumentGraph docGraph = new DocumentGraph(d);
-    System.out.println("Time graph : " + (System.currentTimeMillis() - t1));
-
-    Integer[] vector = new Integer[MiniBabelNet.getInstance().synsetSize];
-    Arrays.fill(vector, 0);
-    Random rand = new Random();
-    int k = ITERATIONS;
-
-    t1 = System.currentTimeMillis();
-    int index = rand.nextInt(docGraph.getNodes().length);
-    Synset node = docGraph.getNodes()[index];
-    while (k-- > 0) {
-      vector[MiniBabelNet.getAllSynsets()
-                         .indexOf(node)]++;
-      int randInt = rand.nextInt(100);
-      if (randInt > RESTART) {
-        index = rand.nextInt(docGraph.getNodes().length);
-        node = docGraph.getNodes()[index];
-      } else {
-        Synset[] neighbor = docGraph.getNeighbors(node);
-        index =rand.nextInt(neighbor.length);
-        node = neighbor[index];
-      }
-    }
-    System.out.println("Time random Walk : " + (System.currentTimeMillis() - t1));
-    return vector;
-  }
 }

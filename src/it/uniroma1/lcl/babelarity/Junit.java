@@ -35,20 +35,6 @@ class BabelarityTest {
   }
 
   @Test
-  public void myTest(){
-      long total = 0;
-      for (int x = 0; x < 1 ; x++) {
-          long t1 = System.currentTimeMillis();
-          testDocumentSimilarity1();
-          long t2 = (System.currentTimeMillis() - t1) /1000;
-          System.out.println(t2);
-          total += t2;
-      }
-      System.out.println("--------------------------");
-      System.out.println(total / 10);
-
-  }
-  @Test
   public void testMiniBabelNet() {
     Synset synset = miniBabelNet.getSynset("bn:00081546n");
     String summary = miniBabelNet.getSynsetSummary(synset);
@@ -133,6 +119,7 @@ class BabelarityTest {
     Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Cristiano_Ronaldo.txt"));
     Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Thomas_Muller.txt"));
     similarityTest(d1, d2, d3, d4);
+
   }
 
   @Test
@@ -160,9 +147,13 @@ class BabelarityTest {
 
   public void similarityTest(LinguisticObject o1, LinguisticObject o2, LinguisticObject o3, LinguisticObject o4) {
     double sim1 = miniBabelNet.computeSimilarity(o1, o2);
+    System.out.println("sim1 : " + sim1);
     double sim2 = miniBabelNet.computeSimilarity(o3, o4);
+    System.out.println("sim2 : " + sim2);
     double sim3 = miniBabelNet.computeSimilarity(o1, o3);
+    System.out.println("sim3 : " + sim3);
     double sim4 = miniBabelNet.computeSimilarity(o2, o4);
+    System.out.println("sim4 : " + sim4);
     assertTrue(sim1 > sim3 && sim2 > sim4);
   }
 
