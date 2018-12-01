@@ -16,12 +16,10 @@ import java.util.stream.Collectors;
 
 public class BabelLexicalSimilarityStrategy implements LexicalSimilarityStrategy {
 
-  //TODO: PROVARE A CONTARE LE OCCORRENZE SOLO UNA VOLTA PER DOCUMENTO
   private static BabelLexicalSimilarityStrategy instance;
   private List<File> corpusFiles;
   private HashMap<String, HashSet<Integer>> documentByWords;
   private Map<String, Integer> wordsIndexing;
-  //  private HashMap<String, Integer> wordsCounter;
   private VectorizedLinguisticObj<Word, Float> vectorizedWords;
 
   private BabelLexicalSimilarityStrategy() {
@@ -111,7 +109,6 @@ public class BabelLexicalSimilarityStrategy implements LexicalSimilarityStrategy
     if (!vectorizedWords.containsKey(p2))
       vectorizedWords.put((Word) o2, generatePMI(p2.toString()));
 
-    System.out.println(vectorizedWords.get(p).length);
     for (int x = 0; x < vectorizedWords.get(p).length; x++) {
       numeratore += vectorizedWords.get(p)[x] * vectorizedWords.get(p2)[x];
       denominatore1 += Math.pow(vectorizedWords.get(p)[x], 2.0);

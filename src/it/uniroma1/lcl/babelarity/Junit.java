@@ -147,13 +147,9 @@ class BabelarityTest {
 
   public void similarityTest(LinguisticObject o1, LinguisticObject o2, LinguisticObject o3, LinguisticObject o4) {
     double sim1 = miniBabelNet.computeSimilarity(o1, o2);
-    System.out.println("sim1 : " + sim1);
     double sim2 = miniBabelNet.computeSimilarity(o3, o4);
-    System.out.println("sim2 : " + sim2);
     double sim3 = miniBabelNet.computeSimilarity(o1, o3);
-    System.out.println("sim3 : " + sim3);
     double sim4 = miniBabelNet.computeSimilarity(o2, o4);
-    System.out.println("sim4 : " + sim4);
     assertTrue(sim1 > sim3 && sim2 > sim4);
   }
 
