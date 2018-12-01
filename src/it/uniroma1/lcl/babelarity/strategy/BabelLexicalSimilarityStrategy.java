@@ -77,7 +77,7 @@ public class BabelLexicalSimilarityStrategy implements LexicalSimilarityStrategy
         Set<Integer> intersection = new HashSet<>(documentByWords.get(s)); // use the copy constructor
         intersection.retainAll(documentByWords.get(p));
         float numDoc = (float) documentByWords.get(s).size() + documentByWords.get(p).size();
-        float numeratore = intersection.size() / (numDoc-intersection.size());
+        float numeratore = intersection.size() / (numDoc - intersection.size());
         float denominatore1 = documentByWords.get(s).size() / numDoc;
         float denominatore2 = documentByWords.get(p).size() / numDoc;
         vettore[wordsIndexing.get(p)] = numeratore / (denominatore1 * denominatore2);
@@ -103,6 +103,7 @@ public class BabelLexicalSimilarityStrategy implements LexicalSimilarityStrategy
     double numeratore = 0;
     double denominatore1 = 0;
     double denominatore2 = 0;
+
 
     if (!vectorizedWords.containsKey(p))
       vectorizedWords.put((Word) o, generatePMI(p.toString()));
