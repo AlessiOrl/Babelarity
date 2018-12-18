@@ -29,9 +29,8 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
   }
 
   /**
-   * Generate the vector of the given {@link Document Document}.
-   * The rank is generated using the graph of the Document (created using the {@link DocumentGraph DocumentGraph} class and using the Random Walk algorithm.
-   *
+   * Generate the vector of the given {@link Document }.<br>
+   * The rank is generated using the graph of the Document (created using the {@link DocumentGraph } class and using the "<i>Random Walk algorithm</i>".
    */
   private Integer[] generateRanks(Document d) {
     DocumentGraph docGraph = new DocumentGraph(d);
@@ -62,10 +61,11 @@ public class BabelDocumentSimilarityStrategy implements DocumentSimilarityStrate
   }
 
   /**
-   * This method compute the Similarity between two Documents, basicalli use the Cosine Similarity method with the two Document's vector.
-   * @param o the first Document
-   * @param o2 the second Document
-   * @return the value of the Similarity between the two Documents
+   * This method compute the Similarity between two Documents, basically use the Cosine Similarity algorithm with the two Document's vector.
+   * Return the value of the Similarity between the two {@link Document } objects.
+   * @param o  the first {@code Document}
+   * @param o2 the second {@code Document}
+   * @return A {@link Double}
    */
   @Override
   public double computeSimilarity(LinguisticObject o, LinguisticObject o2) {

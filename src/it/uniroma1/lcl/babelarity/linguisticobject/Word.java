@@ -5,8 +5,11 @@ import it.uniroma1.lcl.babelarity.MiniBabelNet;
 import java.util.Objects;
 
 /**
- * This class define a typology of {@link LinguisticObject LinguisticObject}.
- * A word is the most basic LinguisticObject in {@link MiniBabelNet MiniBabelNet}; <br> is made up only by a String that rapresent a lemma.
+ * This class define a typology of {@link LinguisticObject}.
+ * <br>
+ * <p>
+ * A word is the most basic LinguisticObject in {@link MiniBabelNet}; Is made up only by a String that rapresent a lemma.
+ * </p>
  *
  */
 public class Word implements LinguisticObject {
@@ -18,9 +21,9 @@ public class Word implements LinguisticObject {
   }
 
   /**
-   * take a String an return the relative Word.
-   * @param s
-   * @return the lemma of the string. Null if there is no lemma in the database.
+   * Take a String an return the relative {@link Word}.
+   * @param s the {@link String} of the word
+   * @return The lemma of the string. Null if there is no lemma in the database.
    */
   public static Word fromString(String s) {
     return new Word(MiniBabelNet.takeWord(s));

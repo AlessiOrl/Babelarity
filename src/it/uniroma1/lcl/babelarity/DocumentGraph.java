@@ -8,9 +8,11 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * This class create the graph of a Document.
- * The nodes of the graph are all the Synset present in the document and those nodes are linked via relations.
+ * This class create the graph of a {@link Document}.
+ * <p>
+ * The nodes of the graph are all the {@link Synset} present in the document and those nodes are linked via relations.<br>
  * A node is linked with another only if the Synset is al most two levels away from the parent node.
+ * </p>
  */
 public class DocumentGraph {
 
@@ -36,11 +38,11 @@ public class DocumentGraph {
   }
 
   /**
-   * This class generate the Neighbors of a given node
+   * This class generate the neighbors of a given node
    *
-   * @param nodeSynset    the Node
-   * @param documentWords the Synset of the Document
-   * @return
+   * @param nodeSynset    The Node
+   * @param documentWords The Synset of the {@code Document}
+   * @return A {@link Set} of {@link Synset}
    */
   private Set<Synset> generateNeighbors(Synset nodeSynset, Set<Synset> documentWords) {
     Set<Synset> neighbors = new HashSet<>();
@@ -66,15 +68,15 @@ public class DocumentGraph {
   }
 
   /**
-   * Return the Array with all the nodes of the graph
+   * @return The {@link Arrays Array} with all the nodes({@link Synset Synsets}) of the graph.
    */
   public Synset[] getNodes() {
     return docGraph.keySet().toArray(new Synset[0]);
   }
 
   /**
-   * @param key the Node
-   * @return all the neighbors of the given node
+   * @param key The node({@link Synset}).
+   * @return All the neighbors of the given node.
    */
   public Synset[] getNeighbors(Synset key) {
     return docGraph.get(key).toArray(new Synset[0]);

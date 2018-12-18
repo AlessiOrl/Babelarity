@@ -1,7 +1,5 @@
 package it.uniroma1.lcl.babelarity.linguisticobject;
 
-import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
-
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Objects;

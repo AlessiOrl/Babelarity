@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This class parse the Documents given.
+ * This class parse the given {@link Document Documents}.
  */
-
-
 public class CorpusManager implements Iterable<Document> {
 
   private static CorpusManager instance;
@@ -27,7 +25,10 @@ public class CorpusManager implements Iterable<Document> {
     CorpusManager.parseStopWords();
   }
 
-
+  /**
+   * Retrun the instance of the class
+   * @return a {@link CorpusManager} object.
+   */
   public static CorpusManager getInstance() {
     if (instance == null)
       instance = new CorpusManager();
@@ -46,15 +47,14 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   *
-   * @return The set of StopWords parsed.
+   * @return The {@link HashSet} of the parsed stopWords.
    */
   public static HashSet<String> getStopWords() {
     return stopWords;
   }
 
   /**
-   * @return a new instance of {@link Document Document} parsing a text file taken via the given path.
+   * @return a new instance of {@link Document} parsing a text file taken via the given path.
    */
   public Document parseDocument(Path path) {
     try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -72,7 +72,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * @return Load from the disk l'object {@link Document Document} identified by ID.
+   * @return Load from the disk l'object {@link Document} identified by ID.
    */
   public Document loadDocument(String id) {
     try (FileInputStream streamFile = new FileInputStream(RelativePaths.PARSED_DOCUMENTS.resolve(id + ".ser").toFile()); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
@@ -84,7 +84,7 @@ public class CorpusManager implements Iterable<Document> {
   }
 
   /**
-   * Save on disk l'object {@link Document Document} given in the input.
+   * Save on disk l'object {@link Document} given in the input.
    */
   public void saveDocument(Document document) {
     try (FileOutputStream streamFile = new FileOutputStream(RelativePaths.PARSED_DOCUMENTS.resolve(document.getId() + ".ser").toFile());

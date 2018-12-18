@@ -5,12 +5,16 @@ import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 import java.util.*;
 
 /**
- * The class that define a typology of a {@link LinguisticObject LinguisticObject}.
- * A Synset (synonym set) is a set of words with the same {@link Pos POS} that can be used and substituted in a certain context. TODO: ??
- * The Synsets are made up by an ID, a {@link Pos POS}, some lemmas, glosses and relations.
- * The lemma is the base form of the words  -> ex. the lemma of the word prettier is pretty
- * A gloss is the meaning of the word, every word can have multiple meaning
- * The relations of a Synset are the arc of the graph, those arcs are used to create the wordnet called {@link it.uniroma1.lcl.babelarity.MiniBabelNet MiniBabelNet}
+ * The class that define a typology of a {@link LinguisticObject}.
+ * <p>
+ * A Synset (synonym set) is a set of words with the same {@link Pos POS} that can be used and substituted in a certain context.<br>
+ * The Synsets are made up by an ID, a POS, some lemmas, glosses and relations.
+ * </p>
+ * <br>
+ * <p> The <b>lemma</b> is the base form of the words.<br> <i>example</i>. prettier -> pretty. <br>
+ * A <b>gloss</b> is the meaning of the word, every word can have multiple meaning. <br>
+ * The <b>relations</b> of a Synset are the arc of the graph, those arcs are used to create the wordnet called {@link it.uniroma1.lcl.babelarity.MiniBabelNet MiniBabelNet}.
+ * </p>
  */
 
 public class Synset implements LinguisticObject {
@@ -65,8 +69,8 @@ public class Synset implements LinguisticObject {
   }
 
   /**
-   * Return the String of the unique ID of the Synset.
-   * The form of the ID is "bn:00000000n" where the last char rapresent the Part-of-speech of the synset : n(oun), v(erb), a(djective), (adve)r(b).
+   * Return the String of the unique ID of the Synset.<br>
+   * <pre>The form of the ID is "bn:00000000n";<br> where the last char rapresent the Part-of-speech of the synset : n(oun), v(erb), a(djective), (adve)r(b).</pre>
    */
   public String getID() {
     return id;
@@ -96,8 +100,9 @@ public class Synset implements LinguisticObject {
   /**
    * Add a relations in the Synset relations.
    *
-   * @param type   il tipo di relazione
-   * @param synset il synset di destinazione
+   * @param type   the type of the realtion.
+   * @param synset the synset to relate.
+   *
    */
   public void addRelation(String type, Synset synset) {
     if (relations.containsKey(type))
@@ -114,21 +119,23 @@ public class Synset implements LinguisticObject {
 
   /**
    * Return the Synset's opposite relations of "is-a".
+   * @return an {@link HashSet} of {@link Synset}
    */
   public HashSet<Synset> getIsaOpposite() {
     return isaOpposite;
   }
 
   /**
+   * Return the specific Synset's relations.
    * @param type the type of the relation to return.
-   * @return the specific Synset's relations.
+   * @return an {@link ArrayList} of {@link Synset}
    */
   public ArrayList<Synset> getRelationByType(String type) {
     return relations.get(type);
   }
 
   /**
-   * @return the map of all the relations of the Synset.
+   * @return the map of all the relations of the {@link Synset}.
    */
   public HashMap<String, ArrayList<Synset>> getRelations() {
     return relations;
