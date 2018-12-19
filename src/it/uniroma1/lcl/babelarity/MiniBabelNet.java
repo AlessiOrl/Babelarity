@@ -1,13 +1,13 @@
 package it.uniroma1.lcl.babelarity;
 
+import it.uniroma1.lcl.babelarity.exceptions.DifferentLinguisticObjectException;
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchLinguisticObjectException;
+import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 import it.uniroma1.lcl.babelarity.linguisticobject.Document;
 import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
 import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
 import it.uniroma1.lcl.babelarity.linguisticobject.Word;
 import it.uniroma1.lcl.babelarity.strategy.*;
-import it.uniroma1.lcl.babelarity.exceptions.DifferentLinguisticObjectException;
-import it.uniroma1.lcl.babelarity.exceptions.NoSuchLinguisticObjectException;
-import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +29,11 @@ public class MiniBabelNet implements Iterable<Synset> {
   private static List<Synset> synsets = new ArrayList<>();
   public int synsetSize;
 
+  /**
+   * {@link MiniBabelNet} is a reduced and simplified english version of <i>{@code BabelNet}</i>.
+   * <p>
+   * The nodes (or {@link Synset}) are taken from the <i>{@code WordNet}</i> and the relations between them are taken from other resources in <i>{@code BabelNet}</i></p>
+   */
   private MiniBabelNet() {
     try (Stream<String> streamLemmatization = Files.lines(RelativePaths.LEMMATIZATIONS);
          Stream<String> streamDictionary = Files.lines(RelativePaths.DICTIONARY);
@@ -77,7 +82,9 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * controlla se nel dizionario è presente la parola. se si restituisce il suo lemma (o se stessa se è essa stessa il lemma) o null nel caso in cui non sia presente nel dizionario
+   * Check if the given word is in the dictionary or not.
+   *
+   * @return If is present the lemma ({@link String}) of the word or <i>null</i> if not.
    */
 
   public static String takeWord(String s) {
@@ -85,7 +92,9 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * restituisce l’insieme di synset che contengono tra i loro sensi la parola in input
+   * Return a list of all synset that contains the meaning of the given word.
+   *
+   * @return A {@link List} of {@link Synset}.
    */
   public List<Synset> getSynsets(String word) {
     return synsets.stream()
@@ -98,24 +107,32 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * restituisce il synset relativo all’id specificato
+   * Return the Synset associated at the given ID.
+   *
+   * @return A {@link Synset}.
    */
   public Synset getSynset(String id) {
     return synsetsMap.get(id);
   }
 
   /**
-   * restituisce uno o più lemmi associati alla parola flessa fornita in input
+   * Return one or more lemmas linked with the inflectedform of the given Word.
+   *
+   * @return A {@link List} of {@link String}.
    */
   public List<String> getLemmas(String word) {
     return List.of(fromInflectedToLemma.get(word));
   }
 
   /**
-   * Restituisce le informazioni inerenti al it.uniroma1.lcl.babelarity.linguisticobject.Synset fornito in input sotto forma di stringa. Il formato della stringa è il seguente: ID\tPOS\tLEMMI\tGLOSSE\tRELAZIONI Le componenti LEMMI, GLOSSE e RELAZIONI possono contenere più elementi, questi sono separati dal carattere ";" Le relazioni devono essere condificate nel seguente formato: TARGETSYNSET_RELNAME   es.
-   * bn:00081546n_has-kind
-   * <p>
-   * es: bn:00047028n	NOUN	word;intelligence;news;tidings	Information about recent and important events	bn:0000001n_has-kind;bn:0000001n_is-a
+   * Return all the info about the {@link Synset Synset} given in input.
+   * <p>The output is generated in this form:<br>
+   * <pre>ID\tPOS\tLEMMAS/tGLOSSES\tRELATIONS</pre>
+   * LEMMAS, GLOSSES e RELATIONS can contains more than oen element, those need to be separated by the character ";".</p>
+   * <p>Relations need to be codificated in the following format:
+   * <pre>TARGETSYNSET_RELNAME</pre> <i>es.</i><pre> bn:00081546n_has-kind</pre></p>
+   * <p><i>example of output:</i>
+   * <pre>bn:00047028n	NOUN	word;intelligence;news;tidings	Information about recent and important events	bn:0000001n_has-kind;bn:0000001n_is-a</pre></p>
    */
   public String getSynsetSummary(Synset s) {
     StringBuilder ret = new StringBuilder(s.getID() + "\t" + s.getPOS() + "\t");
@@ -146,7 +163,11 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * calcola e restituisce un double che rappresenta la similarità tra due oggetti linguistici (it.uniroma1.lcl.babelarity.linguisticobject.Synset, Documenti o parole)
+   * * Compute and return a {@link Double} that rapresent the similarity between two {@link LinguisticObject}({@link Synset}, {@link Document}, {@link Word})
+   *
+   * @param o1 First {@code LinguisticObject}
+   * @param o2 Second {@code LinguisticObject}
+   * @return A {@link Double}
    */
   public double computeSimilarity(LinguisticObject o1, LinguisticObject o2) {
     try {
@@ -176,21 +197,21 @@ public class MiniBabelNet implements Iterable<Synset> {
   }
 
   /**
-   * Imposta l’algoritmo di calcolo della similarità tra parole (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+   This method sets the algorithm to calculate similarities between {@link Word Words}. By default, during the creation of the class, the strategy is set up with the implemented algorithm created by the student.
    */
   public void setLexicalSimilarityStrategy(LexicalSimilarityStrategy strategy) {
     this.lexicalSimilarityStrategy = strategy;
   }
 
   /**
-   * Imposta l’algoritmo di calcolo della similarità tra synset (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+   This method sets the algorithm to calculate similarities between {@link Synset Synsets}. By default, during the creation of the class, the strategy is set up with the implemented algorithm created by the student.
    */
   public void setSemanticSimilarityStrategy(SemanticSimilarityStrategy strategy) {
     this.semanticSimilarityStrategy = strategy;
   }
 
   /**
-   * Imposta l’algoritmo di calcolo della similarità tra documenti (di default, in fase di costruzione dell’oggetto viene impostato l’algoritmo implementato dallo studente).
+   This method sets the algorithm to calculate similarities between {@link Document Documents}. By default, during the creation of the class, the strategy is set up with the implemented algorithm created by the student.
    */
   public void setDocumentSimilarityStrategy(DocumentSimilarityStrategy strategy) {
     this.documentSimilarityStrategy = strategy;
