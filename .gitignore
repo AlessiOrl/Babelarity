@@ -134,3 +134,4 @@ $RECYCLE.BIN/
 .txt
 
 # End of https://www.gitignore.io/api/java,windows,intellij
+.idea/codeStyles/Project.xml
