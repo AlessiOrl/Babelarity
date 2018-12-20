@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * This class extend the SuperClass {@link HashMap}, his aim is to create a kind of cache to save and store the vector created for the {@code Cosine Similarity} algorithm.
+ * This class extend the SuperClass {@link HashMap}, his aim is to create a kind of cache to save and store those vectors that has been created for the {@code Cosine Similarity} algorithm.
  * The default parameter for the MAXIMUM storage is 20, but it can be changed during the creation.
  * The MINIMUM size of storage is two, is final because the {@code Cosine Similarity} algorithm work with two vectors.
  *
- * @param <R> "IL TIPO DA CUI CREIAMO IL VETTORE" todo:tradurre
+ * @param <R> From which the vector is created.
  * @param <T> The type of all the elements of the vector.
  */
 public class VectorizedLinguisticObj<R, T extends Number> extends HashMap<R, T[]> {
@@ -31,8 +31,8 @@ public class VectorizedLinguisticObj<R, T extends Number> extends HashMap<R, T[]
   /**
    * This method put a new vector in the object and, if there is more vectors than the maximum size, decide which one should be removed.
    *
-   * @param obj
-   * @param vector
+   * @param obj  The object from which the vector is created
+   * @param vector The vector that contains all the elements.
    * @return the new vector.
    */
   public T[] put(R obj, T[] vector) {

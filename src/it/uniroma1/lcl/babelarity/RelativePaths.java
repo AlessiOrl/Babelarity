@@ -3,6 +3,9 @@ package it.uniroma1.lcl.babelarity;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * This class store all the relative paths used.
+ */
 public interface RelativePaths {
 
   Path RESOURCES = Paths.get("resources");
