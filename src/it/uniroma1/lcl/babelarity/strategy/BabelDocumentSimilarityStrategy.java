@@ -1,11 +1,6 @@
 package it.uniroma1.lcl.babelarity.strategy;
 
-import it.uniroma1.lcl.babelarity.DocumentGraph;
-import it.uniroma1.lcl.babelarity.MiniBabelNet;
-import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
-import it.uniroma1.lcl.babelarity.linguisticobject.Document;
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+import it.uniroma1.lcl.babelarity.*;
 
 import java.util.Arrays;
 import java.util.Random;

@@ -3,10 +3,6 @@ package it.uniroma1.lcl.babelarity;
 import it.uniroma1.lcl.babelarity.exceptions.DifferentLinguisticObjectException;
 import it.uniroma1.lcl.babelarity.exceptions.NoSuchLinguisticObjectException;
 import it.uniroma1.lcl.babelarity.exceptions.NoSuchPosException;
-import it.uniroma1.lcl.babelarity.linguisticobject.Document;
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
-import it.uniroma1.lcl.babelarity.linguisticobject.Word;
 import it.uniroma1.lcl.babelarity.strategy.*;
 
 import java.io.IOException;

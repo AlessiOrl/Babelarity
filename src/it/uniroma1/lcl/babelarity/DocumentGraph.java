@@ -1,8 +1,5 @@
 package it.uniroma1.lcl.babelarity;
 
-import it.uniroma1.lcl.babelarity.linguisticobject.Document;
-import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
-
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;

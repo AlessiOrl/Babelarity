@@ -1,7 +1,7 @@
 package it.uniroma1.lcl.babelarity.strategy;
 
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
+import it.uniroma1.lcl.babelarity.LinguisticObject;
+import it.uniroma1.lcl.babelarity.Synset;
 
 import java.util.ArrayList;
 import java.util.HashMap;

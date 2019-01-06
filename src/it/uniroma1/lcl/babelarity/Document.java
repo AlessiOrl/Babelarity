@@ -1,4 +1,4 @@
-package it.uniroma1.lcl.babelarity.linguisticobject;
+package it.uniroma1.lcl.babelarity;
 
 import java.io.Serializable;
 import java.nio.file.Path;

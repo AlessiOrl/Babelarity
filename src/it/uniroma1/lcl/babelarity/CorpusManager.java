@@ -1,7 +1,5 @@
 package it.uniroma1.lcl.babelarity;
 
-import it.uniroma1.lcl.babelarity.linguisticobject.Document;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;

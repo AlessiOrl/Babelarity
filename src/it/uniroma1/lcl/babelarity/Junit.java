@@ -1,9 +1,5 @@
 package it.uniroma1.lcl.babelarity;
 
-import it.uniroma1.lcl.babelarity.linguisticobject.Document;
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.Synset;
-import it.uniroma1.lcl.babelarity.linguisticobject.Word;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -119,7 +115,6 @@ class BabelarityTest {
     Document d3 = documentManager.parseDocument(DOCUMENTS.resolve("Cristiano_Ronaldo.txt"));
     Document d4 = documentManager.parseDocument(DOCUMENTS.resolve("Thomas_Muller.txt"));
     similarityTest(d1, d2, d3, d4);
-
   }
 
   @Test

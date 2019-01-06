@@ -1,11 +1,6 @@
 package it.uniroma1.lcl.babelarity.strategy;
 
-import it.uniroma1.lcl.babelarity.CorpusManager;
-import it.uniroma1.lcl.babelarity.MiniBabelNet;
-import it.uniroma1.lcl.babelarity.RelativePaths;
-import it.uniroma1.lcl.babelarity.VectorizedLinguisticObj;
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
-import it.uniroma1.lcl.babelarity.linguisticobject.Word;
+import it.uniroma1.lcl.babelarity.*;
 
 import java.io.File;
 import java.io.IOException;

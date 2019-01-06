@@ -1,6 +1,6 @@
 package it.uniroma1.lcl.babelarity.strategy;
 
-import it.uniroma1.lcl.babelarity.linguisticobject.LinguisticObject;
+import it.uniroma1.lcl.babelarity.LinguisticObject;
 
 public interface SimilarityStrategy {
 
