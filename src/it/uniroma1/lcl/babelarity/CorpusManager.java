@@ -53,6 +53,7 @@ public class CorpusManager implements Iterable<Document> {
 
   /**
    * @return a new instance of {@link Document} parsing a text file taken via the given path.
+   * @param the path which the document is located.
    */
   public Document parseDocument(Path path) {
     try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -71,6 +72,7 @@ public class CorpusManager implements Iterable<Document> {
 
   /**
    * @return Load from the disk l'object {@link Document} identified by ID.
+   * @param id the Id of the document
    */
   public Document loadDocument(String id) {
     try (FileInputStream streamFile = new FileInputStream(RelativePaths.PARSED_DOCUMENTS.resolve(id + ".ser").toFile()); ObjectInputStream streamObj = new ObjectInputStream(streamFile)) {
@@ -83,6 +85,8 @@ public class CorpusManager implements Iterable<Document> {
 
   /**
    * Save on disk l'object {@link Document} given in the input.
+   *
+   *@param document the Document to save
    */
   public void saveDocument(Document document) {
     try (FileOutputStream streamFile = new FileOutputStream(RelativePaths.PARSED_DOCUMENTS.resolve(document.getId() + ".ser").toFile());

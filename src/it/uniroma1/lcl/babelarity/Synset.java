@@ -11,7 +11,7 @@ import java.util.*;
  * The Synsets are made up by an ID, a POS, some lemmas, glosses and relations.
  * </p>
  * <br>
- * <p> The <b>lemma</b> is the base form of the words.<br> <i>example</i>. prettier -> pretty. <br>
+ * <p> The <b>lemma</b> is the base form of the words.<br> <i>example</i>. prettier -&gt; pretty. <br>
  * A <b>gloss</b> is the meaning of the word, every word can have multiple meaning. <br>
  * The <b>relations</b> of a Synset are the arc of the graph, those arcs are used to create the wordnet called {@link it.uniroma1.lcl.babelarity.MiniBabelNet MiniBabelNet}.
  * </p>

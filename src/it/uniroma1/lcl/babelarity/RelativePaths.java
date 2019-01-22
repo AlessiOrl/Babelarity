@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 public interface RelativePaths {
 
   Path RESOURCES = Paths.get("resources");
+  Path STOPWORDS = Paths.get("src").resolve("stopWords.txt");
 
   Path DOCUMENTS = RESOURCES.resolve("documents");
   Path CORPUS = RESOURCES.resolve("corpus");
@@ -18,7 +19,6 @@ public interface RelativePaths {
   Path LEMMATIZATIONS = RESOURCES.resolve("lemmatization-en.txt");
   Path DICTIONARY = RESOURCES.resolve("dictionary.txt");
   Path RELATIONS = RESOURCES.resolve("relations.txt");
-  Path STOPWORDS = RESOURCES.resolve("stopWords.txt");
   Path GLOSSES = RESOURCES.resolve("glosses.txt");
 
 }

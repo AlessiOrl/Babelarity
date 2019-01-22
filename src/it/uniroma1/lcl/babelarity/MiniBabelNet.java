@@ -81,6 +81,7 @@ public class MiniBabelNet implements Iterable<Synset> {
    * Check if the given word is in the dictionary or not.
    *
    * @return If is present the lemma ({@link String}) of the word or <i>null</i> if not.
+   * @param s the String to check. 
    */
 
   public static String takeWord(String s) {
@@ -91,6 +92,7 @@ public class MiniBabelNet implements Iterable<Synset> {
    * Return a list of all synset that contains the meaning of the given word.
    *
    * @return A {@link List} of {@link Synset}.
+   * 
    */
   public List<Synset> getSynsets(String word) {
     return synsets.stream()
@@ -122,13 +124,12 @@ public class MiniBabelNet implements Iterable<Synset> {
 
   /**
    * Return all the info about the {@link Synset Synset} given in input.
-   * <p>The output is generated in this form:<br>
-   * <pre>ID\tPOS\tLEMMAS/tGLOSSES\tRELATIONS</pre>
-   * LEMMAS, GLOSSES e RELATIONS can contains more than oen element, those need to be separated by the character ";".</p>
-   * <p>Relations need to be codificated in the following format:
-   * <pre>TARGETSYNSET_RELNAME</pre> <i>es.</i><pre> bn:00081546n_has-kind</pre></p>
-   * <p><i>example of output:</i>
-   * <pre>bn:00047028n	NOUN	word;intelligence;news;tidings	Information about recent and important events	bn:0000001n_has-kind;bn:0000001n_is-a</pre></p>
+   * <p>The output is generated in this form:<br>ID\tPOS\tLEMMAS/tGLOSSES\tRELATIONS<br>
+   * LEMMAS, GLOSSES e RELATIONS can contains more than oen element, those need to be separated by the character ";". </p>
+   * <p>Relations need to be codificated in the following format:</p>
+   * <pre>TARGETSYNSET_RELNAME</pre> <i>es.</i><pre> bn:00081546n_has-kind</pre>
+   * <p><i>example of output:</i></p>
+   * <pre>bn:00047028n	NOUN	word;intelligence;news;tidings	Information about recent and important events	bn:0000001n_has-kind;bn:0000001n_is-a</pre>
    */
   public String getSynsetSummary(Synset s) {
     StringBuilder ret = new StringBuilder(s.getID() + "\t" + s.getPOS() + "\t");
